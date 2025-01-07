@@ -1,11 +1,9 @@
 from datetime import datetime
-
-from django.db.models import ForeignKey
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 
 
 class Base(DeclarativeBase):
