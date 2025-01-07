@@ -55,30 +55,26 @@ def add_list():
 def add_item():
     return "<p>added item</p>"
 
-@app.route("/item/reserve/<int: id>", methods=['PATCH'])
+@app.route("/item/reserve/<int:id>", methods=['PATCH'])
 def reserve_item(id):
     return f"<p>reserved item {id}</p>"
 
-@app.route("/item/claim/<int: id>", methods=['PATCH'])
+@app.route("/item/claim/<int:id>", methods=['PATCH'])
 def claim_item(id):
     return f"<p>claimed item {id}</p>"
 
-@app.route("/item/archive/<int: id>", methods=['PATCH'])
+@app.route("/item/archive/<int:id>", methods=['PATCH'])
 def archive_item(id):
     return f"<p>archived item {id}</p>"
 
-@app.route("/wishlist/archive/<int: id>", methods=['PATCH'])
+@app.route("/wishlist/archive/<int:id>", methods=['PATCH'])
 def archive_list(id):
     return f"<p>archived wishlist {id}</p>"
 
-@app.route("/wishlist/archive/<int: id>", methods=['PATCH'])
-def archive_list(id):
-    return f"<p>archived wishlist {id}</p>"
-
-@app.route("/wishlist/delete/<int: id>", methods=['DELETE'])
+@app.route("/wishlist/delete/<int:id>", methods=['DELETE'])
 def delete_list(id):
     return f"<p>deleted wishlist {id}</p>"
 
-@app.route("/item/delete/<int: id>", methods=['Delete'])
+@app.route("/item/delete/<int:id>", methods=['DELETE'])
 def delete_item(id):
     return f"<p>deleted item {id}</p>"
