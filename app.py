@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -32,7 +32,7 @@ class Wishlist(db.Model):
 class Item(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    updated: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    updated: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
     state: Mapped[int] = mapped_column(default=0)
     wishlist_id: Mapped[int] = mapped_column(ForeignKey("wishlist.id"))
     wishlist: Mapped["Wishlist"] = relationship(back_populates="items")
