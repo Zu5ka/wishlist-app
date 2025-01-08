@@ -14,22 +14,28 @@ db = SQLAlchemy(model_class=Base)
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
-    hash: Mapped[str] = mapped_column(unique=True)
-    salt: Mapped[str] = mapped_column(unique=True)
-    wishlists: Mapped[list["Wishlist"]] = relationship()
+    wishlists: Mapped[list["Wishlist"]] = relationship(
+        back_populates="user"
+    )
 
 class Wishlist(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True)
-    state: Mapped[int] = mapped_column(unique=True)
-    items: Mapped[list["Item"]] = relationship()
-    id_user: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    name: Mapped[str] = mapped_column()
+    state: Mapped[int] = mapped_column(default=0)
+    items: Mapped[list["Item"]] = relationship(
+       back_populates="wishlist",
+       cascade="all, delete-orphan"
+   )
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user: Mapped["User"] = relationship(back_populates="wishlists")
 
 class Item(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True)
-    updated: Mapped[datetime] = mapped_column(unique=True)
-    state: Mapped[int] = mapped_column(unique=True)
+    name: Mapped[str] = mapped_column()
+    updated: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    state: Mapped[int] = mapped_column(default=0)
+    wishlist_id: Mapped[int] = mapped_column(ForeignKey("wishlist.id"))
+    wishlist: Mapped["Wishlist"] = relationship(back_populates="items")
 
 
 app = Flask(__name__)
