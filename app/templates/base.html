@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
@@ -11,11 +10,9 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit-icons.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% block content %}{% endblock %}
-    <button hx-post="/clicked" hx-swap="outerHTML">
-    Click Me
-  </button>
 </body>
 </html>

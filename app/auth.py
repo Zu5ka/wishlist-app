@@ -7,11 +7,11 @@ auth_blueprint = Blueprint('auth', __name__)
 
 @auth_blueprint.route("/login", methods=['GET', 'POST'])
 def login():
-  pass
+  return render_template('login.html')
 
 @auth_blueprint.route("/register", methods=['GET', 'POST'])
 def register():
-  pass
+  return render_template('register.html')
 
 @auth_blueprint.route("/logout", methods=['POST'])
 @login_required

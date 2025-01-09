@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="uk-flex uk-flex-center uk-flex-middle">
+    <div class="uk-width-medium">
+        <div class="uk-card uk-card-body uk-card-default">
+            <h3 class="uk-card-title">Přihlášení</h3>
+            <form>
+                <div uk-margin>
+                <input class="uk-input uk-margin-xsmall-bottom" type="text" placeholder="uživatelské jméno" name="username" required>
+                <input class="uk-input uk-margin-xsmall-bottom" type="password" placeholder="heslo" name="password" required>
+                <spam class="uk-text-danger" id="errors">
+                </spam>
+                <div class="uk-flex uk-width-1-1 uk-flex-center">
+                    <button class="uk-button uk-button-default uk-margin-xsmall">
+                        Přihlásit se
+                    </button>
+                </div>
+                </div>
+            </form>
+        </div>
+        <div style="text-align: center;">
+        <a href="{{ url_for('auth.register') }}">
+            Nemáte účet? Zaregistrovat
+        </a>
+        </div>
+    </div>
+</main>
+{% endblock %}
