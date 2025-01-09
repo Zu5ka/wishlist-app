@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
