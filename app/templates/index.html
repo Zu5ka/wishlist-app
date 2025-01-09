@@ -1,7 +1,89 @@
 {% extends "base.html" %}
 
 {% block content %}
-<button class="uk-button uk-button-default" hx-post="{{ url_for('auth.logout') }}" hx-confirm="Opravdu se chcete odhlásit?">
-    "Odhlásit se"
-</button>
+<main uk-grid class="uk-grid-collapse">
+    <aside class="uk-padding uk-width-1-4@m uk-background-muted">
+        <div class="uk-flex uk-flex-between uk-flex-middle">
+            <span class="uk-margin-remove uk-text-large">Jméno uživatele</span>
+            <a href="" uk-icon="icon: sign-out" hx-post="{{ url_for('auth.logout') }}"
+               hx-confirm="Opravdu se chcete odhlásit?"></a>
+        </div>
+        <hr>
+        <ul uk-nav="multiple: true" class="uk-nav uk-nav-default">
+            <li class="uk-parent uk-open">
+                <a href="" class="uk-text-large">
+                    Moje seznamy <span uk-nav-parent-icon></span>
+                </a>
+                <ul>
+                    <li class="uk-margin-left uk-margin-small-top">Frodo</li>
+                    <li class="uk-margin-left uk-margin-small-top">Pipin</li>
+                    <li class="uk-margin-left uk-margin-small-top">Smisek</li>
+                    <li class="uk-margin-left uk-margin-small-top">SmisekSmisekSmisekSmisekSmisekSm ise kSm isekSm i
+                        sekSmisek SmisekSmisekSm i sekSm ise kSm is ekSmisekSmisekSmise
+                        kSmisekSmisekSmisekSmisekSmisekSmi sekSmisekSmisekSmisekSmisek
+                    </li>
+                </ul>
+            </li>
+            <li class="uk-parent uk-open">
+                <a href="" class="uk-text-large">
+                    Seznamy ostatních <span uk-nav-parent-icon></span>
+                </a>
+                <ul>
+                    <li>Legolas</li>
+                    <li>Gimli</li>
+                    <li>Gandalf</li>
+                    <li>Gandalfův SmisekSmisekSmisekSmisekSmisekSm ise kSm isekSm i sekSmisek SmisekSmisekSm i sekSm ise
+                        kSm is ekSmisekSmisekSmise kSmisekSmisekSmisekSmisekSmisekSmi sekSmisekSmisekSmisekSmisek
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="uk-width-expand@m uk-flex uk-flex-center uk-flex-middle">
+        <div class="uk-width-4-5 uk-height-large">
+            <div class="uk-flex uk-flex-between uk-flex-bottom">
+                <div><h1 class="uk-margin-remove">Název seznamu</h1></div>
+                <div>Jméno vlastníka</div>
+            </div>
+            <div class="uk-card uk-card-body uk-card-default uk-height-large">
+
+                <table class="uk-table">
+                    <tbody>
+                        <tr>
+                            <td class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></td>
+                            <td class="uk-table-expand">yeehaw</td>
+                            <td class="uk-table-shrink"><a href="" uk-icon="icon: trash"></a></td>
+                        </tr>
+                        <tr>
+                            <td><input class="uk-checkbox " type="checkbox"></td>
+                            <td>yeehaw</td>
+                            <td><a href="" uk-icon="icon: trash"></a></td>
+                        </tr>
+                        <tr>
+                            <td><input class="uk-checkbox" type="checkbox"></td>
+                            <td>yeehaw</td>
+                            <td><a href="" uk-icon="icon: trash"></a></td>
+                        </tr>
+                        <tr>
+                            <td><input class="uk-checkbox" type="checkbox"></td>
+                            <td>yeehaw</td>
+                            <td><a href="" uk-icon="icon: trash"></a></td>
+                        </tr>
+                    </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="uk-table-shrink"><a href="" uk-icon="icon: plus"></a></td>
+                                <td class="uk-table-expand"><input type="text" class="uk-input" placeholder="přidat položku"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</main>
+
 {% endblock %}
