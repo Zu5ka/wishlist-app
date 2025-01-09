@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, request
 from flask_login import login_required, current_user
 from . import db
-from .models import Wishlist
+from .models import Wishlist, Item
 
 views_blueprint = Blueprint('views', __name__)
 
@@ -34,7 +34,13 @@ def show_list(list_id):
 @views_blueprint.route("/<int:list_id>/item", methods=['POST'])
 @login_required
 def add_item(list_id):
-    return "<p>added item</p>"
+    item_name = request.form.get('new_item_name')
+    if not item_name or item_name.strip() == "":
+        return "Název položky musí obsahovat alespoň jeden znak."
+    item = Item(name=item_name, wishlist_id=list_id)
+    db.session.add(item)
+    db.session.commit()
+    return render_template("_partials/_item.html", list=list_id, item=item, current_user=current_user)
 
 @views_blueprint.route("/item/reserve/<int:id>", methods=['PATCH'])
 @login_required
