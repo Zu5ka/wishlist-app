@@ -4,8 +4,9 @@ from flask_login import login_required
 views_blueprint = Blueprint('views', __name__)
 
 @views_blueprint.route("/")
-def hello_world():
-    return render_template("base.html", content="Hello World")
+@login_required
+def index():
+    return render_template("index.html")
 
 @views_blueprint.route("/clicked", methods=['POST'])
 def clicked():

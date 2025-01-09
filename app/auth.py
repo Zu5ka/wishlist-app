@@ -7,13 +7,45 @@ auth_blueprint = Blueprint('auth', __name__)
 
 @auth_blueprint.route("/login", methods=['GET', 'POST'])
 def login():
-  return render_template('login.html')
+  if request.method == 'GET':
+    return render_template('login.html')
+  else:
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if not username or not password:
+      return "Zadejte uživatelské jméno i heslo."
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
+      login_user(user)
+      return '',200, {'HX-Redirect': url_for('views.index')}
+    else:
+      return "Nesprávné heslo nebo uživatelské jméno."
 
 @auth_blueprint.route("/register", methods=['GET', 'POST'])
 def register():
-  return render_template('register.html')
+  if request.method == 'GET':
+    return render_template('register.html')
+  else:
+    username = request.form.get('username')
+    password = request.form.get('password')
+    password_again = request.form.get('password_again')
+    if not username or not password or not password_again:
+      return "Vyplňte všechna pole."
+    if password != password_again:
+      return "Hesla se neshodují."
+    if len(password) < 8:
+      return "Zadejte heslo dlouhé alespoň 8 znaků."
+    if User.query.filter_by(username=username).first():
+      return "Uživatel s tímto jménem už existuje."
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    login_user(user)
+    return '', 200, {'HX-Redirect': url_for('views.index')}
 
 @auth_blueprint.route("/logout", methods=['POST'])
 @login_required
 def logout():
-  pass
+  logout_user()
+  return '', 200, {'HX-Redirect': url_for('auth.login')}

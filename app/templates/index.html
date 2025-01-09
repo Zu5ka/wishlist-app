@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+<button class="uk-button uk-button-default" hx-post="{{ url_for('auth.logout') }}" hx-confirm="Opravdu se chcete odhlásit?">
+    "Odhlásit se"
+</button>
+{% endblock %}
