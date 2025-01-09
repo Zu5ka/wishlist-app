@@ -14,7 +14,7 @@
             Seznamy ostatních <span uk-nav-parent-icon></span>
         </a>
         <ul>
-            {% for list in wishlists if list.user_id != current_user.id %}
+            {% for list in current_user.shared_with_me %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>
