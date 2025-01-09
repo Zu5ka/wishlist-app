@@ -47,6 +47,11 @@ def add_item(list_id):
 def reserve_item(id):
     return f"<p>reserved item {id}</p>"
 
+@views_blueprint.route("/item/claim/<int:id>", methods=['PATCH'])
+@login_required
+def claim_item(id):
+    return f"<p>archived item {id}</p>"
+
 @views_blueprint.route("/item/archive/<int:id>", methods=['PATCH'])
 @login_required
 def archive_item(id):
