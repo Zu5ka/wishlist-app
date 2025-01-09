@@ -7,7 +7,7 @@
 
         <table class="uk-table">
             <tbody id="items-{{ list.id }}">
-                {% for item in list.items %}
+                {% for item in list.items if item.state != 3 %}
                     {% include "_partials/_item.html" %}
                 {% endfor %}
             </tbody>

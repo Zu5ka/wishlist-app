@@ -40,17 +40,12 @@ def add_item(list_id):
     item = Item(name=item_name, wishlist_id=list_id)
     db.session.add(item)
     db.session.commit()
-    return render_template("_partials/_item.html", list=list_id, item=item, current_user=current_user)
+    return render_template("_partials/_item.html", list=item.wishlist, item=item, current_user=current_user)
 
 @views_blueprint.route("/item/reserve/<int:id>", methods=['PATCH'])
 @login_required
 def reserve_item(id):
     return f"<p>reserved item {id}</p>"
-
-@views_blueprint.route("/item/claim/<int:id>", methods=['PATCH'])
-@login_required
-def claim_item(id):
-    return f"<p>claimed item {id}</p>"
 
 @views_blueprint.route("/item/archive/<int:id>", methods=['PATCH'])
 @login_required
@@ -65,9 +60,17 @@ def archive_list(id):
 @views_blueprint.route("/wishlist/delete/<int:id>", methods=['DELETE'])
 @login_required
 def delete_list(id):
+    # TODO: add a button
     return f"<p>deleted wishlist {id}</p>"
 
 @views_blueprint.route("/item/delete/<int:id>", methods=['DELETE'])
 @login_required
 def delete_item(id):
-    return f"<p>deleted item {id}</p>"
+    item = Item.query.filter_by(id=id).first()
+    if not item:
+        return "Položka neexistuje."
+    if item.wishlist.user_id != current_user.id:
+        return "Položka v tomto seznamu neexistuje."
+    item.state = 3
+    db.session.commit()
+    return "", 200
