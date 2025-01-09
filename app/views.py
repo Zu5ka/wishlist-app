@@ -28,7 +28,8 @@ def add_list():
 @views_blueprint.route("/wishlist/<int:list_id>", methods=['GET'])
 @login_required
 def show_list(list_id):
-    return "<p>added wishlist</p>"
+    list = Wishlist.query.filter_by(id=list_id).first()
+    return render_template("_partials/_list.html", list=list, current_user=current_user)
 
 @views_blueprint.route("/<int:list_id>/item", methods=['POST'])
 @login_required
