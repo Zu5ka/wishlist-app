@@ -5,12 +5,22 @@ from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
+wishlist_shares = db.Table('wishlist_shares',
+                           db.Column('wishlist_id', db.Integer, db.ForeignKey('wishlist.id'), primary_key=True),
+                           db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 class User(UserMixin, db.Model):
    id: Mapped[int] = mapped_column(primary_key=True)
    username: Mapped[str] = mapped_column(unique=True)
    password_hash: Mapped[str] = mapped_column()
    wishlists: Mapped[list["Wishlist"]] = relationship(
        back_populates="user"
+   )
+
+   shared_with_me: Mapped[list["Wishlist"]] = relationship(
+      secondary=wishlist_shares,
+      back_populates="shared_with"
    )
 
    def set_password(self, password: str):
@@ -29,6 +39,11 @@ class Wishlist(db.Model):
    )
    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
    user: Mapped["User"] = relationship(back_populates="wishlists")
+
+   shared_with: Mapped[list["User"]] = relationship(
+      secondary=wishlist_shares,
+      back_populates="shared_with_me"
+   )
 
 class Item(db.Model):
    id: Mapped[int] = mapped_column(primary_key=True)
