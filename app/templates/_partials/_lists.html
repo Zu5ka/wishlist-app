@@ -1,0 +1,36 @@
+<ul uk-nav="multiple: true" class="uk-nav uk-nav-default">
+    <li class="uk-parent uk-open">
+        <a href="" class="uk-text-large">
+            Moje seznamy <span uk-nav-parent-icon></span>
+        </a>
+        <ul id="my_lists">
+            {% for list in current_user.wishlists %}
+                <li class="uk-margin-left uk-margin-small-top">
+                    <a href="#"
+                       hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
+                       hx-target="#list_content"
+                    >
+                        {{ list.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+    <li class="uk-parent uk-open">
+        <a href="" class="uk-text-large">
+            Seznamy ostatních <span uk-nav-parent-icon></span>
+        </a>
+        <ul>
+            {% for list in wishlists if list.user_id != current_user.id %}
+            <li class="uk-margin-left uk-margin-small-top">
+                    <a href="#"
+                       hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
+                       hx-target="#list_content"
+                    >
+                        {{ list.name }}
+                    </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>

@@ -1,0 +1,37 @@
+<div id="list-{{ list.id }}" class="uk-width-4-5 uk-height-large">
+    <div class="uk-flex uk-flex-between uk-flex-bottom">
+        <div><h1 class="uk-margin-remove">{{ list.name }}</h1></div>
+        <div>{{ list.user.username }}</div>
+    </div>
+    <div class="uk-card uk-card-body uk-card-default uk-height-large">
+
+        <table class="uk-table">
+            <tbody id="items-{{ list.id }}">
+                {% for item in list.items %}
+                    {% include "_partials/_item.html" %}
+                {% endfor %}
+            </tbody>
+            {% if current_user.id == list.user_id %}
+                <tfoot>
+                    <tr>
+                        <td class="uk-table-shrink">
+                            <div class="uk-flex-center uk-flex-middle">
+                                <a href=""
+                                   uk-icon="icon: plus"
+                                   hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
+                                   hx-include="closest tr"
+                                   hx-target="#items-{{ list.id }}"
+                                   hx-swap="beforeend"
+                                ></a>
+                            </div>
+                        </td>
+                        <td class="uk-table-expand"><input type="text" class="uk-input" placeholder="přidat položku" name="new_item_name"></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            {% endif %}
+        </table>
+
+
+    </div>
+</div>

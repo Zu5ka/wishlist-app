@@ -17,9 +17,14 @@ def clicked():
 def add_list():
     return "<p>added wishlist</p>"
 
-@views_blueprint.route("/item", methods=['POST'])
+@views_blueprint.route("/wishlist/<int:list_id>", methods=['GET'])
 @login_required
-def add_item():
+def show_list(list_id):
+    return "<p>added wishlist</p>"
+
+@views_blueprint.route("/<int:list_id>/item", methods=['POST'])
+@login_required
+def add_item(list_id):
     return "<p>added item</p>"
 
 @views_blueprint.route("/item/reserve/<int:id>", methods=['PATCH'])
