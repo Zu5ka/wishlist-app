@@ -5,14 +5,7 @@
         </a>
         <ul id="my_lists">
             {% for list in current_user.wishlists %}
-                <li class="uk-margin-left uk-margin-small-top">
-                    <a href="#"
-                       hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
-                       hx-target="#list_content"
-                    >
-                        {{ list.name }}
-                    </a>
-                </li>
+                {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>
     </li>
@@ -22,14 +15,7 @@
         </a>
         <ul>
             {% for list in wishlists if list.user_id != current_user.id %}
-            <li class="uk-margin-left uk-margin-small-top">
-                    <a href="#"
-                       hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
-                       hx-target="#list_content"
-                    >
-                        {{ list.name }}
-                    </a>
-            </li>
+                {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>
     </li>

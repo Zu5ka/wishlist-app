@@ -1,5 +1,7 @@
-from flask import Flask, render_template, Blueprint
-from flask_login import login_required
+from flask import Flask, render_template, Blueprint, request
+from flask_login import login_required, current_user
+from . import db
+from .models import Wishlist
 
 views_blueprint = Blueprint('views', __name__)
 
@@ -15,7 +17,13 @@ def clicked():
 @views_blueprint.route("/wishlist", methods=['POST'])
 @login_required
 def add_list():
-    return "<p>added wishlist</p>"
+    list_name = request.form.get('list_name')
+    if not list_name or list_name.strip() == "":
+        return "Název seznamu musí obsahovat alespoň jeden znak."
+    wishlist = Wishlist(name=list_name, user_id=current_user.id)
+    db.session.add(wishlist)
+    db.session.commit()
+    return render_template("_partials/_lists_menu_entry.html", list=wishlist)
 
 @views_blueprint.route("/wishlist/<int:list_id>", methods=['GET'])
 @login_required
