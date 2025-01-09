@@ -7,6 +7,7 @@ class Base(DeclarativeBase):
   pass
 
 db = SQLAlchemy(model_class=Base)
+from . import models
 login_manager = LoginManager()
 
 def create_app():
@@ -18,7 +19,10 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'login'  # redirect to /login when user is not logged in
 
-    from . import views, auth, models
+    from .auth import auth_blueprint
+    from .views import views_blueprint
+    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(views_blueprint)
 
     @login_manager.user_loader
     def load_user(user_id):
