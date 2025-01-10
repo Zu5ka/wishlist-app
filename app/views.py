@@ -1,14 +1,14 @@
 from flask import Flask, render_template, Blueprint, request
 from flask_login import login_required, current_user
 from . import db
-from .models import Wishlist, Item
+from .models import Wishlist, Item, User
 
 views_blueprint = Blueprint('views', __name__)
 
 @views_blueprint.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template("index.html", results=[])
 
 @views_blueprint.route("/clicked", methods=['POST'])
 def clicked():
@@ -79,3 +79,50 @@ def delete_item(id):
     item.state = 3
     db.session.commit()
     return "", 200
+
+@views_blueprint.route("/user/search/<int:list_id>", methods=['POST'])
+@login_required
+def search_user(list_id):
+    user_query = request.form.get('search')
+    list = Wishlist.query.filter_by(id=list_id).first()
+    if not list:
+        return "Seznam neexistuje."
+    if not user_query:
+        return render_template("_partials/_user_search_results.html", results=[], list=list)
+    users = User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
+    results = [x for x in users if x not in list.shared_with and x != current_user]
+    return render_template("_partials/_user_search_results.html", results=results, list=list)
+
+@views_blueprint.route("/list/<int:list_id>/share/<int:user_id>", methods=['PATCH'])
+@login_required
+def share_list(list_id, user_id):
+    user = User.query.filter_by(id=user_id).first()
+    list = Wishlist.query.filter_by(id=list_id).first()
+    if not user or not list:
+        return "Uživatel nebo seznam neexistuje."
+    if list.user_id != current_user.id:
+        return "Seznam patří jinému uživateli."
+    if user_id == current_user.id:
+        return "Nelze nasdílet vlastní seznam."
+    if user in list.shared_with:
+        return "Seznam již je nasdílený."
+    list.shared_with.append(user)
+    db.session.commit()
+    return render_template("_partials/_shared_user.html", user=user, list=list, oob=True)
+
+@views_blueprint.route("/list/<int:list_id>/unshare/<int:user_id>", methods=['PATCH'])
+@login_required
+def unshare_list(list_id, user_id):
+    user = User.query.filter_by(id=user_id).first()
+    list = Wishlist.query.filter_by(id=list_id).first()
+    if not user or not list:
+        return "Uživatel nebo seznam neexistuje."
+    if list.user_id != current_user.id:
+        return "Seznam patří jinému uživateli."
+    if user_id == current_user.id:
+        return "Nelze provést s vlastním seznamem."
+    if not user in list.shared_with:
+        return "Seznam už je nasdílený."
+    list.shared_with.remove(user)
+    db.session.commit()
+    return "", 200, {"HX-Trigger" : "search-refresh"}
