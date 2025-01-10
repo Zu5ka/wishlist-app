@@ -21,7 +21,7 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'login'  # redirect to /login when user is not logged in
+    login_manager.login_view = 'auth.login'  # redirect to /login when user is not logged in
 
     from .auth import auth_blueprint
     from .views import views_blueprint
