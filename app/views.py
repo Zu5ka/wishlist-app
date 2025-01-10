@@ -58,7 +58,19 @@ def reserve_item(id):
 @views_blueprint.route("/item/claim/<int:id>", methods=['PATCH'])
 @login_required
 def claim_item(id):
-    return f"<p>archived item {id}</p>"
+    item = Item.query.filter_by(id=id).first()
+    if not item:
+        return "Položka neexistuje."
+    if item.state == ItemState.deleted:
+        return "Položka smazaná."
+    if current_user != item.wishlist.user:
+        return "Seznam není Váš."
+    if item.state != ItemState.claimed:
+        item.state = ItemState.claimed
+    else:
+        item.state = ItemState.active
+    db.session.commit()
+    return render_template("_partials/_item.html", item=item, list=item.wishlist, current_user=current_user), 200
 
 @views_blueprint.route("/item/archive/<int:id>", methods=['PATCH'])
 @login_required

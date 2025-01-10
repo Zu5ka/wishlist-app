@@ -12,7 +12,13 @@
                     {% if item.state == ItemState.reserved %} checked {% endif %}
                {% endif %}>
     </td>
-    <td class="uk-table-expand">{{ item.name }}</td>
+    <td class="uk-table-expand">
+        {% if item.state == ItemState.claimed %}
+        <s>{{ item.name }}</s>
+        {% else %}
+        {{ item.name }}
+        {% endif %}
+    </td>
     <td class="uk-table-shrink">
         {% if current_user.id == list.user_id %}
         <a href=""
