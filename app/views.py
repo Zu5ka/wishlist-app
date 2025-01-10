@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, request
 from flask_login import login_required, current_user
 from . import db
-from .models import Wishlist, Item, User, ItemState
+from .models import Wishlist, Item, User, ItemState, ListState
 
 views_blueprint = Blueprint('views', __name__)
 
@@ -62,7 +62,7 @@ def claim_item(id):
     if not item:
         return "Položka neexistuje."
     if item.state == ItemState.deleted:
-        return "Položka smazaná."
+        return "Položka už je smazaná."
     if current_user != item.wishlist.user:
         return "Seznam není Váš."
     if item.state != ItemState.claimed:
@@ -72,15 +72,22 @@ def claim_item(id):
     db.session.commit()
     return render_template("_partials/_item.html", item=item, list=item.wishlist, current_user=current_user), 200
 
-@views_blueprint.route("/item/archive/<int:id>", methods=['PATCH'])
-@login_required
-def archive_item(id):
-    return f"<p>archived item {id}</p>"
-
 @views_blueprint.route("/wishlist/archive/<int:id>", methods=['PATCH'])
 @login_required
 def archive_list(id):
-    return f"<p>archived wishlist {id}</p>"
+    list = Wishlist.query.filter_by(id=id).first()
+    if not list:
+        return "Seznam neexistuje."
+    if list.state == ListState.deleted:
+        return "Seznam je smazaný."
+    if current_user != list.user:
+        return "Seznam není váš."
+    if list.state != ListState.archived:
+        list.state = ListState.archived
+    else:
+        list.state = ListState.active
+    db.session.commit()
+    return render_template("_partials/_list.html", list=list, current_user=current_user, oob=True), 200
 
 @views_blueprint.route("/wishlist/delete/<int:id>", methods=['DELETE'])
 @login_required

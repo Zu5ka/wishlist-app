@@ -1,4 +1,9 @@
-<li id="list-{{ list.id }}" class="uk-margin-left uk-margin-small-top">
+<li id="list-{{ list.id }}"
+    class="uk-margin-left uk-margin-small-top"
+    {% if delete %}
+    hx-swap-oob="delete"
+    {% endif %}
+>
     <a href="#"
        hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
        hx-target="#list_content"

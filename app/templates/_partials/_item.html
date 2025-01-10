@@ -10,7 +10,11 @@
                     hx-patch="{{ url_for('views.reserve_item', id=item.id) }}"
                     hx-swap="none"
                     {% if item.state == ItemState.reserved %} checked {% endif %}
-               {% endif %}>
+               {% endif %}
+               {% if list.state == ListState.archived %}
+               disabled="true"
+               {% endif %}
+        >
     </td>
     <td class="uk-table-expand">
         {% if item.state == ItemState.claimed %}
@@ -20,7 +24,7 @@
         {% endif %}
     </td>
     <td class="uk-table-shrink">
-        {% if current_user.id == list.user_id %}
+        {% if current_user.id == list.user_id and list.state != ListState.archived %}
         <a href=""
            uk-icon="icon: trash"
            hx-delete="{{ url_for('views.delete_item', id=item.id) }}"
