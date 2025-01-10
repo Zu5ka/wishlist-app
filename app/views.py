@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, request
 from flask_login import login_required, current_user
 from . import db
-from .models import Wishlist, Item, User
+from .models import Wishlist, Item, User, ItemState
 
 views_blueprint = Blueprint('views', __name__)
 
@@ -41,7 +41,19 @@ def add_item(list_id):
 @views_blueprint.route("/item/reserve/<int:id>", methods=['PATCH'])
 @login_required
 def reserve_item(id):
-    return f"<p>reserved item {id}</p>"
+    item = Item.query.filter_by(id=id).first()
+    if not item:
+        return "Položka neexistuje."
+    if item.state != ItemState.active and item.state != ItemState.reserved:
+        return "Položka je zarezervovaná, předaná nebo smazaná."
+    if not current_user in item.wishlist.shared_with:
+        return "Seznam s Vámi není sdílený."
+    if item.state == ItemState.active:
+        item.state = ItemState.reserved
+    else:
+        item.state = ItemState.active
+    db.session.commit()
+    return "", 200
 
 @views_blueprint.route("/item/claim/<int:id>", methods=['PATCH'])
 @login_required

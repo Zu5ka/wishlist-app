@@ -1,17 +1,16 @@
 <tr id="item-{{ item.id }}">
     <td class="uk-table-shrink">
-        <input class="uk-checkbox"
-               type="checkbox"
-               {% if current_user.id == list.user_id %}
-                    hx-post="{{ url_for('views.claim_item', id=item.id) }}"
-                    {% if item.state == 2 %} checked {% endif %}
-               {% else %}
-                    hx-post="{{ url_for('views.reserve_item', id=item.id) }}"
-                    {% if item.state == 1 %} checked {% endif %}
-               {% endif %}
+        <input type="checkbox"
                hx-target="#item-{{ item.id }}"
-               hx-swap="outerHTML"
-        >
+               {% if current_user.id == list.user_id %}
+                    hx-patch="{{ url_for('views.claim_item', id=item.id) }}"
+                    hx-swap="outerHTML"
+                    {% if item.state == ItemState.claimed %} checked {% endif %}
+               {% else %}
+                    hx-patch="{{ url_for('views.reserve_item', id=item.id) }}"
+                    hx-swap="none"
+                    {% if item.state == ItemState.reserved %} checked {% endif %}
+               {% endif %}>
     </td>
     <td class="uk-table-expand">{{ item.name }}</td>
     <td class="uk-table-shrink">

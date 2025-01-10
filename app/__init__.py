@@ -8,12 +8,16 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 from . import models
+from .models import ItemState, ListState
 login_manager = LoginManager()
+
 
 def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///wishlist.db"
     app.config["SECRET_KEY"] = "vanilkova zmrzlina"  # TODO: make random?
+    app.jinja_env.globals['ItemState'] = ItemState
+    app.jinja_env.globals['ListState'] = ListState
 
     db.init_app(app)
     login_manager.init_app(app)
