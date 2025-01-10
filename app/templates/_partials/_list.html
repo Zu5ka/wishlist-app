@@ -35,6 +35,7 @@
         <!-- TODO: connect to route -->
         <span id="list_errors" class="uk-text-danger"></span>
 
+        {% if list.user.id == current_user.id %}
         <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share" uk-toggle>Sdílet seznam</a>
         <div id="modal-share" uk-modal>
             <div class="uk-modal-dialog">
@@ -62,17 +63,10 @@
 
                 <div class="uk-modal-footer uk-text-right">
                     <!-- TODO: dialog shouldnt close until succes -->
-                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zrušit</button>
-                    <button class="uk-button uk-button-primary uk-modal-close"
-                            type="button"
-                            hx-post="{{ url_for('views.add_list') }}"
-                            hx-include="#new_list_form"
-                            hx-target="#my_lists"
-                            hx-swap="beforeend"
-                    >Uložit
-                    </button>
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
