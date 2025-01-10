@@ -3,7 +3,19 @@ from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
+from enum import IntEnum
 from . import db
+
+class ItemState(IntEnum):
+   active: 0
+   reserved: 1
+   claimed: 2
+   deleted: 3
+
+class ListState(IntEnum):
+   active: 0
+   archived: 1
+   deleted: 2
 
 wishlist_shares = db.Table('wishlist_shares',
                            db.Column('wishlist_id', db.Integer, db.ForeignKey('wishlist.id'), primary_key=True),

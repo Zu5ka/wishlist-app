@@ -66,7 +66,7 @@ def delete_list(id):
         return "Seznam neexistuje."
     if list.user_id != current_user.id:
         return "Seznam patří jinému uživateli."
-    list.state = 3
+    list.state = 2
     db.session.commit()
     return render_template("_partials/_placeholder.html", list=list, oob=True), 200
 
