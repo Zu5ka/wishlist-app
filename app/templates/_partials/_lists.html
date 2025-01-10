@@ -4,7 +4,7 @@
             Moje seznamy <span uk-nav-parent-icon></span>
         </a>
         <ul id="my_lists">
-            {% for list in current_user.wishlists %}
+            {% for list in current_user.wishlists if list.state != 3 %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>

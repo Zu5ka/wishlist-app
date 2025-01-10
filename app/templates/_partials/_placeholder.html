@@ -1,0 +1,6 @@
+<div class="uk-flex uk-flex-center uk-flex-middle placeholder">
+    Vyber list ze seznamu
+</div>
+{% if oob %}
+<li id="list-{{ list.id }}" hx-swap-oob="delete"></li>
+{% endif %}

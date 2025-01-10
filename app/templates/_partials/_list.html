@@ -38,7 +38,13 @@
 
     {% if list.user.id == current_user.id %}
     <div class="uk-flex uk-flex-between uk-flex-none">
-        <a class="uk-button uk-button-danger uk-margin-xsmall" href="#">Smazat seznam</a>
+        <a class="uk-button uk-button-danger uk-margin-xsmall"
+           href="#"
+           hx-delete="{{ url_for('views.delete_list', id=list.id) }}"
+           hx-confirm="Skutečně chcete seznam smazat?"
+           hx-swap="innerHTML"
+           hx-target="#list_content"
+        >Smazat seznam</a>
         <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share" uk-toggle>Sdílet seznam</a>
     </div>
     <div id="modal-share" uk-modal>

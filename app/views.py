@@ -61,8 +61,14 @@ def archive_list(id):
 @views_blueprint.route("/wishlist/delete/<int:id>", methods=['DELETE'])
 @login_required
 def delete_list(id):
-    # TODO: add a button
-    return f"<p>deleted wishlist {id}</p>"
+    list = Wishlist.query.filter_by(id=id).first()
+    if not list:
+        return "Seznam neexistuje."
+    if list.user_id != current_user.id:
+        return "Seznam patří jinému uživateli."
+    list.state = 3
+    db.session.commit()
+    return render_template("_partials/_placeholder.html", list=list, oob=True), 200
 
 @views_blueprint.route("/item/delete/<int:id>", methods=['DELETE'])
 @login_required
