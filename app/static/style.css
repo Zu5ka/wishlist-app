@@ -16,3 +16,11 @@ html, body, main {
 #search-results {
     list-style: none;
 }
+
+#list_content {
+    margin-top: 5vh;
+}
+
+.placeholder {
+    margin-top: -5vh;
+}

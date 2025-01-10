@@ -10,10 +10,6 @@ views_blueprint = Blueprint('views', __name__)
 def index():
     return render_template("index.html", results=[])
 
-@views_blueprint.route("/clicked", methods=['POST'])
-def clicked():
-    return "<p>clicked</p>"
-
 @views_blueprint.route("/wishlist", methods=['POST'])
 @login_required
 def add_list():

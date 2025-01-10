@@ -3,8 +3,8 @@
         <div><h1 class="uk-margin-remove">{{ list.name }}</h1></div>
         <div>{{ list.user.username }}</div>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-height-large">
-
+    <div class="uk-card uk-card-body uk-card-default uk-height-large uk-flex uk-flex-column">
+    <div class="uk-flex-1">
         <table class="uk-table">
             <tbody id="items-{{ list.id }}">
             {% for item in list.items if item.state != 3 %}
@@ -32,41 +32,45 @@
             </tfoot>
             {% endif %}
         </table>
-        <!-- TODO: connect to route -->
-        <span id="list_errors" class="uk-text-danger"></span>
+    </div>
+    <!-- TODO: connect to route -->
+    <span id="list_errors" class="uk-text-danger"></span>
 
-        {% if list.user.id == current_user.id %}
+    {% if list.user.id == current_user.id %}
+    <div class="uk-flex uk-flex-between uk-flex-none">
+        <a class="uk-button uk-button-danger uk-margin-xsmall" href="#">Smazat seznam</a>
         <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share" uk-toggle>Sdílet seznam</a>
-        <div id="modal-share" uk-modal>
-            <div class="uk-modal-dialog">
-                <button class="uk-modal-close-default" type="button" uk-close></button>
-                <div class="uk-modal-header">
-                    <h2 class="uk-modal-title">Sdílet seznam</h2>
-                </div>
+    </div>
+    <div id="modal-share" uk-modal>
+        <div class="uk-modal-dialog">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <div class="uk-modal-header">
+                <h2 class="uk-modal-title">Sdílet seznam</h2>
+            </div>
 
-                <div class="uk-modal-body">
-                    <ul id="shared_users" class="uk-flex uk-flex-wrap">
-                        {% for user in list.shared_with %}
-                        {% include "_partials/_shared_user.html" %}
-                        {% endfor %}
-                    </ul>
-                    <input class="uk-search"
-                           type="search"
-                           name="search"
-                           placeholder="Sdílet s:"
-                           hx-post="{{ url_for('views.search_user', list_id=list.id) }}"
-                           hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load, search-refresh from:body"
-                           hx-target="#search-results"
-                           hx-swap="outerHTML">
-                    {% include "_partials/_user_search_results.html" %}
-                </div>
+            <div class="uk-modal-body">
+                <ul id="shared_users" class="uk-flex uk-flex-wrap">
+                    {% for user in list.shared_with %}
+                    {% include "_partials/_shared_user.html" %}
+                    {% endfor %}
+                </ul>
+                <input class="uk-search"
+                       type="search"
+                       name="search"
+                       placeholder="Sdílet s:"
+                       hx-post="{{ url_for('views.search_user', list_id=list.id) }}"
+                       hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load, search-refresh from:body"
+                       hx-target="#search-results"
+                       hx-swap="outerHTML">
+                {% include "_partials/_user_search_results.html" %}
+            </div>
 
-                <div class="uk-modal-footer uk-text-right">
-                    <!-- TODO: dialog shouldnt close until succes -->
-                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
-                </div>
+            <div class="uk-modal-footer uk-text-right">
+                <!-- TODO: dialog shouldnt close until succes -->
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
             </div>
         </div>
-        {% endif %}
     </div>
+    {% endif %}
+</div>
 </div>
