@@ -1,19 +1,21 @@
-from flask import Flask, render_template, Blueprint, request
+from flask import render_template, Blueprint, request
 from flask_login import login_required, current_user
 from . import db
 from .models import Wishlist, Item, User, ItemState, ListState
 
-views_blueprint = Blueprint('views', __name__)
+views_blueprint = Blueprint("views", __name__)
+
 
 @views_blueprint.route("/")
 @login_required
 def index():
     return render_template("index.html", results=[])
 
-@views_blueprint.route("/wishlist", methods=['POST'])
+
+@views_blueprint.route("/wishlist", methods=["POST"])
 @login_required
 def add_list():
-    list_name = request.form.get('list_name')
+    list_name = request.form.get("list_name")
     if not list_name or list_name.strip() == "":
         return "Název seznamu musí obsahovat alespoň jeden znak.", 400
     wishlist = Wishlist(name=list_name, user_id=current_user.id)
@@ -21,18 +23,20 @@ def add_list():
     db.session.commit()
     return render_template("_partials/_lists_menu_entry.html", list=wishlist)
 
-@views_blueprint.route("/wishlist/<int:list_id>", methods=['GET'])
+
+@views_blueprint.route("/wishlist/<int:list_id>", methods=["GET"])
 @login_required
 def show_list(list_id):
     list = Wishlist.query.filter_by(id=list_id).first()
-    if list.user_id != current_user.id and not current_user in list.shared_with:
+    if list.user_id != current_user.id and current_user not in list.shared_with:
         return "Nemáte právo zobrazit tento seznam", 403
     return render_template("_partials/_list.html", list=list, current_user=current_user)
 
-@views_blueprint.route("/<int:list_id>/item", methods=['POST'])
+
+@views_blueprint.route("/<int:list_id>/item", methods=["POST"])
 @login_required
 def add_item(list_id):
-    item_name = request.form.get('new_item_name')
+    item_name = request.form.get("new_item_name")
     if not item_name or item_name.strip() == "":
         return "Název položky musí obsahovat alespoň jeden znak.", 400
     list = Wishlist.query.filter_by(id=list_id).first()
@@ -43,9 +47,12 @@ def add_item(list_id):
     item = Item(name=item_name, wishlist_id=list_id)
     db.session.add(item)
     db.session.commit()
-    return render_template("_partials/_item.html", list=item.wishlist, item=item, current_user=current_user)
+    return render_template(
+        "_partials/_item.html", list=item.wishlist, item=item, current_user=current_user
+    )
 
-@views_blueprint.route("/item/reserve/<int:id>", methods=['PATCH'])
+
+@views_blueprint.route("/item/reserve/<int:id>", methods=["PATCH"])
 @login_required
 def reserve_item(id):
     item = Item.query.filter_by(id=id).first()
@@ -53,7 +60,7 @@ def reserve_item(id):
         return "Položka neexistuje.", 404
     if item.state != ItemState.active and item.state != ItemState.reserved:
         return "Položka je zarezervovaná, předaná nebo smazaná.", 400
-    if not current_user in item.wishlist.shared_with:
+    if current_user not in item.wishlist.shared_with:
         return "Seznam s Vámi není sdílený.", 403
     if item.state == ItemState.active:
         item.state = ItemState.reserved
@@ -62,7 +69,8 @@ def reserve_item(id):
     db.session.commit()
     return "", 200
 
-@views_blueprint.route("/item/claim/<int:id>", methods=['PATCH'])
+
+@views_blueprint.route("/item/claim/<int:id>", methods=["PATCH"])
 @login_required
 def claim_item(id):
     item = Item.query.filter_by(id=id).first()
@@ -77,9 +85,12 @@ def claim_item(id):
     else:
         item.state = ItemState.active
     db.session.commit()
-    return render_template("_partials/_item.html", item=item, list=item.wishlist, current_user=current_user), 200
+    return render_template(
+        "_partials/_item.html", item=item, list=item.wishlist, current_user=current_user
+    ), 200
 
-@views_blueprint.route("/wishlist/archive/<int:id>", methods=['PATCH'])
+
+@views_blueprint.route("/wishlist/archive/<int:id>", methods=["PATCH"])
 @login_required
 def archive_list(id):
     list = Wishlist.query.filter_by(id=id).first()
@@ -94,9 +105,12 @@ def archive_list(id):
     else:
         list.state = ListState.active
     db.session.commit()
-    return render_template("_partials/_list.html", list=list, current_user=current_user, oob=True), 200
+    return render_template(
+        "_partials/_list.html", list=list, current_user=current_user, oob=True
+    ), 200
 
-@views_blueprint.route("/wishlist/delete/<int:id>", methods=['DELETE'])
+
+@views_blueprint.route("/wishlist/delete/<int:id>", methods=["DELETE"])
 @login_required
 def delete_list(id):
     list = Wishlist.query.filter_by(id=id).first()
@@ -108,7 +122,8 @@ def delete_list(id):
     db.session.commit()
     return render_template("_partials/_placeholder.html", list=list, oob=True), 200
 
-@views_blueprint.route("/item/delete/<int:id>", methods=['DELETE'])
+
+@views_blueprint.route("/item/delete/<int:id>", methods=["DELETE"])
 @login_required
 def delete_item(id):
     item = Item.query.filter_by(id=id).first()
@@ -120,20 +135,28 @@ def delete_item(id):
     db.session.commit()
     return "", 200
 
-@views_blueprint.route("/user/search/<int:list_id>", methods=['POST'])
+
+@views_blueprint.route("/user/search/<int:list_id>", methods=["POST"])
 @login_required
 def search_user(list_id):
-    user_query = request.form.get('search')
+    user_query = request.form.get("search")
     list = Wishlist.query.filter_by(id=list_id).first()
     if not list:
         return "Seznam neexistuje.", 404
     if not user_query:
-        return render_template("_partials/_user_search_results.html", results=[], list=list)
-    users = User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
+        return render_template(
+            "_partials/_user_search_results.html", results=[], list=list
+        )
+    users = (
+        User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
+    )
     results = [x for x in users if x not in list.shared_with and x != current_user]
-    return render_template("_partials/_user_search_results.html", results=results, list=list)
+    return render_template(
+        "_partials/_user_search_results.html", results=results, list=list
+    )
 
-@views_blueprint.route("/list/<int:list_id>/share/<int:user_id>", methods=['PATCH'])
+
+@views_blueprint.route("/list/<int:list_id>/share/<int:user_id>", methods=["PATCH"])
 @login_required
 def share_list(list_id, user_id):
     user = User.query.filter_by(id=user_id).first()
@@ -148,9 +171,12 @@ def share_list(list_id, user_id):
         return "Seznam již je nasdílený.", 400
     list.shared_with.append(user)
     db.session.commit()
-    return render_template("_partials/_shared_user.html", user=user, list=list, oob=True)
+    return render_template(
+        "_partials/_shared_user.html", user=user, list=list, oob=True
+    )
 
-@views_blueprint.route("/list/<int:list_id>/unshare/<int:user_id>", methods=['PATCH'])
+
+@views_blueprint.route("/list/<int:list_id>/unshare/<int:user_id>", methods=["PATCH"])
 @login_required
 def unshare_list(list_id, user_id):
     user = User.query.filter_by(id=user_id).first()
@@ -161,8 +187,8 @@ def unshare_list(list_id, user_id):
         return "Seznam patří jinému uživateli.", 403
     if user_id == current_user.id:
         return "Nelze provést s vlastním seznamem.", 400
-    if not user in list.shared_with:
+    if user not in list.shared_with:
         return "Seznam už je nasdílený.", 400
     list.shared_with.remove(user)
     db.session.commit()
-    return "", 200, {"HX-Trigger" : "search-refresh"}
+    return "", 200, {"HX-Trigger": "search-refresh"}
