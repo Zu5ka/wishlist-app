@@ -1,27 +1,33 @@
 {% if oob %}
 <ul id="shared_users" hx-swap-oob="beforeend">
     <li id="remove-user-{{user.id}}">
-    <span class="uk-label">
-    {{ user.username }}
-    <a href="" uk-icon="icon: close"
-       hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
-       hx-swap="delete"
-       hx-target="#remove-user-{{user.id}}"
-       class="close-button"
-    ></a>
+    <span class="uk-label uk-flex uk-flex-middle">
+        <!-- iconky jsou o 2px větší ... -->
+        <span>
+            {{ user.username }}
+        </span>
+        <a href="" uk-icon="icon: close"
+           hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
+           hx-swap="delete"
+           hx-target="#remove-user-{{user.id}}"
+           class="close-button"
+        ></a>
     </span>
     </li>
 </ul>
 {% else %}
 <li id="remove-user-{{user.id}}">
-    <span class="uk-label">
-    {{ user.username }}
-    <a href="" uk-icon="icon: close"
-       hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
-       hx-swap="delete"
-       hx-target="#remove-user-{{user.id}}"
-       class="close-button"
-    ></a>
+    <span class="uk-label uk-flex uk-flex-middle">
+        <!-- iconky jsou o 2px větší ... -->
+        <span>
+            {{ user.username }}
+        </span>
+        <a href="" uk-icon="icon: close"
+           hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
+           hx-swap="delete"
+           hx-target="#remove-user-{{user.id}}"
+           class="close-button"
+        ></a>
     </span>
 </li>
 {% endif %}
