@@ -266,20 +266,76 @@ def test_reserve_item(client):
     response = reserve_item(client, firstitem.id)
     assert response.status_code == 200
     assert firstitem.state == ItemState.reserved
-
     response = reserve_item(client, firstitem.id)
-    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
-
-    claim_item(client, firstitem.id)
+    assert response.status_code == 200
+    assert firstitem.state != ItemState.reserved
     response = reserve_item(client, firstitem.id)
-    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
-
-    delete_item(client, firstitem.id)
-    response = reserve_item(client, firstitem.id)
-    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
+    assert response.status_code == 200
+    assert firstitem.state == ItemState.reserved
 
     response = reserve_item(client, seconditem.id)
     respond_error(response, 403, "Seznam je Váš nebo s Vámi není sdílený.")
+
+    logout_user(client)
+    login_user(client, "secuser", "testpass123")
+
+    claim_item(client, firstitem.id)
+    assert firstitem.state == ItemState.claimed
+
+    add_item(client, "thirditem", firstlist.id)
+    thirditem = Item.query.filter_by(name="thirditem").first()
+    delete_item(client, thirditem.id)
+    assert thirditem.state == ItemState.deleted
+
+    logout_user(client)
+    login_user(client, "testuser", "testpass123")
+
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 400, "Položka je předaná nebo smazaná.")
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 400, "Položka je předaná nebo smazaná.")
+
+def test_claim_item(client):
+    create_user(client, "firstuser", "testpass123")
+    firstuser = User.query.filter_by(username="firstuser").first()
+    logout_user(client)
+
+    create_user(client, "secuser", "testpass123")
+    secuser = User.query.filter_by(username="secuser").first()
+    add_list(client, "firstlist")
+    firstlist = Wishlist.query.filter_by(name="firstlist").first()
+    add_item(client, "firstitem", firstlist.id)
+    firstitem = Item.query.filter_by(name="firstitem").first()
+    add_item(client, "seconditem", firstlist.id)
+    seconditem = Item.query.filter_by(name="seconditem").first()
+    share_list(client, firstlist.id, firstuser.id)
+    logout_user(client)
+
+    login_user(client, "firstuser", "testpass123")
+    reserve_item(client, firstitem.id)
+
+    response = claim_item(client, firstitem.id)
+    respond_error(response, 403, "Seznam není Váš.")
+    response = claim_item(client, seconditem.id)
+    respond_error(response, 403, "Seznam není Váš.")
+
+    response = claim_item(client, 55)
+    respond_error(response, 404, "Položka neexistuje.")
+
+    logout_user(client)
+
+    login_user(client, "secuser", "testpass123")
+    response = claim_item(client, firstitem.id)
+    assert response.status_code == 200
+    response = claim_item(client, seconditem.id)
+    assert response.status_code == 200
+    response = claim_item(client, seconditem.id)
+    assert response.status_code == 200
+
+    delete_item(client, firstitem.id)
+    assert firstitem.state == ItemState.deleted
+    response = claim_item(client, firstitem.id)
+    respond_error(response, 400, "Položka už je smazaná.")
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")

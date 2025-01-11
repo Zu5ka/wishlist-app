@@ -36,4 +36,4 @@ def claim_item(client, item_id):
     return client.patch(f"/item/claim/{item_id}")
 
 def delete_item(client, item_id):
-    return client.patch(f"/item/delete/{item_id}")
+    return client.delete(f"/item/delete/{item_id}")
