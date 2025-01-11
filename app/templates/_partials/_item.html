@@ -1,6 +1,7 @@
 <tr id="item-{{ item.id }}">
     <td class="uk-table-shrink">
         <input type="checkbox"
+               class="uk-padding-small uk-checkbox"
                hx-target="#item-{{ item.id }}"
                {% if current_user.id == list.user_id %}
                     hx-patch="{{ url_for('views.claim_item', id=item.id) }}"

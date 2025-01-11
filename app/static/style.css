@@ -17,10 +17,17 @@ html, body, main {
     list-style: none;
 }
 
-#list_content {
-    margin-top: 5vh;
+.username {
+    text-transform: none;
+    border-left: solid 1px #e5e5e5;
+    font-weight: 600;
+    padding-left: 1em;
+    margin-left: 1em;
 }
 
-.placeholder {
-    margin-top: -5vh;
+.hide-modal {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    display: none;
 }

@@ -1,22 +1,22 @@
-<div id="list-view-{{ list.id }}" class="uk-width-4-5 uk-height-large">
-    <div class="uk-flex uk-flex-between uk-flex-bottom">
-        <div class="uk-flex uk-flex-row uk-flex-begin uk-flex-middle">
-            {% if list.state != ListState.archived %}
-            <a href=""
-               class="uk-padding-small"
-               uk-icon="icon: album"
-               hx-patch="{{ url_for('views.archive_list', id=list.id) }}"
-               hx-confirm="Chcete seznam archivovat?"
-               hx-target="#list-view-{{ list.id }}"
-               hx-swap="outerHTML"
-            ></a>
-            {% endif %}
-            <h1 class="uk-margin-remove">{{ list.name }}</h1>
-        </div>
-        <div>{{ list.user.username }}</div>
-    </div>
-    <div class="uk-card uk-card-body uk-card-default uk-height-large uk-flex uk-flex-column">
-        <div class="uk-flex-1">
+<div id="list-view-{{ list.id }}" class="uk-width-4-5 uk-flex uk-flex-middle">
+    <div class="uk-card uk-card-body uk-card-default uk-flex uk-flex-column uk-width-1-1"
+         style="height: 80vh"
+    >
+            <div class="uk-flex uk-flex-row uk-flex-right uk-flex-middle">
+                {% if list.state != ListState.archived %}
+                <a href=""
+                   uk-icon="icon: album"
+                   hx-patch="{{ url_for('views.archive_list', id=list.id) }}"
+                   hx-confirm="Chcete seznam archivovat?"
+                   hx-target="#list-view-{{ list.id }}"
+                   hx-swap="outerHTML"
+                ></a>
+                <span class="username">{{ list.user.username }}</span>
+                {% endif %}
+            </div>
+        <h1 class="uk-margin-remove">{{ list.name }}</h1>
+        <hr>
+        <div class="uk-flex-1 uk-overflow-auto">
             <table class="uk-table">
                 <tbody id="items-{{ list.id }}">
                 {% for item in list.items if item.state != 3 %}
@@ -24,33 +24,31 @@
                 {% endfor %}
                 </tbody>
                 {% if current_user.id == list.user_id and list.state != ListState.archived %}
-                <tfoot>
-                <tr>
-                    <td class="uk-table-shrink">
-                        <div class="uk-flex-center uk-flex-middle">
-                            <a href=""
-                               uk-icon="icon: plus"
-                               hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
-                               hx-include="closest tr"
-                               hx-target="#items-{{ list.id }}"
-                               hx-swap="beforeend"
-                            ></a>
-                        </div>
-                    </td>
-                    <td class="uk-table-expand"><input type="text" class="uk-input" placeholder="přidat položku"
-                                                       name="new_item_name"></td>
-                    <td></td>
-                </tr>
-                </tfoot>
                 {% endif %}
             </table>
         </div>
+        <hr>
+        <section class="uk-flex uk-flex-row uk-flex-center uk-flex-middle uk-padding-top-small">
+            <a href=""
+               class="uk-margin-small-right uk-button uk-button-primary"
+               hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
+               hx-include="closest section"
+               hx-target="#items-{{ list.id }}"
+               hx-swap="beforeend"
+            >
+                <span uk-icon="plus"></span>
+            </a>
+            <input type="text"
+                   class="uk-input"
+                   placeholder="přidat položku"
+                   name="new_item_name">
+        </section>
         <!-- TODO: connect to route -->
         <span id="list_errors" class="uk-text-danger"></span>
 
         {% if list.user.id == current_user.id %}
         {% if list.state != ListState.archived %}
-        <div class="uk-flex uk-flex-between uk-flex-none">
+        <div class="uk-flex uk-flex-between uk-flex-none uk-margin-small">
             <a class="uk-button uk-button-danger uk-margin-xsmall"
                href="#"
                hx-delete="{{ url_for('views.delete_list', id=list.id) }}"
@@ -60,6 +58,21 @@
             >Smazat seznam</a>
             <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share" uk-toggle>Sdílet seznam</a>
         </div>
+
+        {% else %}
+        <div class="uk-flex uk-flex-center uk-flex-none uk-margin-small">
+            <a class="uk-button uk-button-default uk-margin-xsmall"
+               href="#"
+               hx-patch="{{ url_for('views.archive_list', id=list.id) }}"
+               hx-swap="outerHTML"
+               hx-target="#list-view-{{ list.id }}"
+            >Vyjmout z archivu</a>
+        </div>
+        {% endif %}
+        {% endif %}
+
+    </div>
+    <div class="hide-modal">
         <div id="modal-share" uk-modal>
             <div class="uk-modal-dialog">
                 <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -73,14 +86,16 @@
                         {% include "_partials/_shared_user.html" %}
                         {% endfor %}
                     </ul>
-                    <input class="uk-search"
-                           type="search"
-                           name="search"
-                           placeholder="Sdílet s:"
-                           hx-post="{{ url_for('views.search_user', list_id=list.id) }}"
-                           hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load, search-refresh from:body"
-                           hx-target="#search-results"
-                           hx-swap="outerHTML">
+                    <form class="uk-search uk-search-default uk-width-1-1">
+                        <input class="uk-search-input"
+                               type="search"
+                               name="search"
+                               placeholder="Sdílet s:"
+                               hx-post="{{ url_for('views.search_user', list_id=list.id) }}"
+                               hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load, search-refresh from:body"
+                               hx-target="#search-results"
+                               hx-swap="outerHTML">
+                    </form>
                     {% include "_partials/_user_search_results.html" %}
                 </div>
 
@@ -90,18 +105,6 @@
                 </div>
             </div>
         </div>
-        {% else %}
-        <div class="uk-flex uk-flex-center uk-flex-none">
-            <a class="uk-button uk-button-default uk-margin-xsmall"
-               href="#"
-               hx-patch="{{ url_for('views.archive_list', id=list.id) }}"
-               hx-swap="outerHTML"
-               hx-target="#list-view-{{ list.id }}"
-            >Vyjmout z archivu</a>
-        </div>
-        {% endif %}
-        {% endif %}
-
     </div>
 </div>
 {% if oob %}
