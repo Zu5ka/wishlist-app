@@ -37,9 +37,36 @@ def test_register(client):
    assert response.response == "Vyplňte všechna pole."
 
    response = client.post("/register", data={
+       "username": "   ",
+       "password": "testpass123",
+       "password_again": "a"
+   })
+   assert response.status_code != 200
+   assert not "HX-Redirect" in response.headers
+   assert response.response == "Uživatelské jméno musí obsahovat alespoň 1 znak a heslo musí být dlouhé alespoň 8 znaků."
+
+   response = client.post("/register", data={
+       "username": "emptypassword",
+       "password": "",
+       "password_again": "a"
+   })
+   assert response.status_code != 200
+   assert not "HX-Redirect" in response.headers
+   assert response.response == "Uživatelské jméno musí obsahovat alespoň 1 znak a heslo musí být dlouhé alespoň 8 znaků."
+
+   response = client.post("/register", data={
        "username": "testuser2",
        "password": "testpass123",
        "password_again": "testnotpass123"
+   })
+   assert response.status_code != 200
+   assert not "HX-Redirect" in response.headers
+   assert response.response == "Hesla se neshodují."
+
+   response = client.post("/register", data={
+       "username": "testuser2",
+       "password": "testpass123",
+       "password_again": ""
    })
    assert response.status_code != 200
    assert not "HX-Redirect" in response.headers

@@ -31,6 +31,8 @@ def register():
     password_again = request.form.get('password_again')
     if not username or not password or not password_again:
       return "Vyplňte všechna pole."
+    if username.strip() == "" or password.strip() == "":
+      return "Uživatelské jméno musí obsahovat alespoň 1 znak a heslo musí být dlouhé alespoň 8 znaků."
     if password != password_again:
       return "Hesla se neshodují."
     if len(password) < 8:
