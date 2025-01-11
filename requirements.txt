@@ -2,3 +2,5 @@ flask==3.1.0
 Flask-SQLAlchemy==3.1.1
 FLask-Login==0.6.3
 waitress==3.0.2
+pytest==8.3.4
+pytest-flask==1.3.0
