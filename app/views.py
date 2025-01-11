@@ -188,7 +188,7 @@ def unshare_list(list_id, user_id):
     if user_id == current_user.id:
         return "Nelze provést s vlastním seznamem.", 400
     if user not in list.shared_with:
-        return "Seznam už je nasdílený.", 400
+        return "Seznam není sdílený s tímto uživatelem.", 400
     list.shared_with.remove(user)
     db.session.commit()
     return "", 200, {"HX-Trigger": "search-refresh"}
