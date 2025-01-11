@@ -1,7 +1,7 @@
-from app.models import Wishlist, User, Item
+from app.models import Wishlist, User, Item, ItemState, ListState
 from .utils import (create_user, login_user, add_list,
                     share_list, logout_user, unshare_list,
-                    respond_error, add_item)
+                    respond_error, add_item, reserve_item, claim_item, delete_item)
 from .config_test import app, client
 
 def test_register(client):
@@ -237,7 +237,49 @@ def test_add_item(client):
 
     response = add_item(client, "newitem", newlist.id)
     respond_error(response, 403, "Seznam není Váš.")
-    
+
+def test_reserve_item(client):
+    create_user(client, "testuser", "testpass123")
+    testuser = User.query.filter_by(username="testuser").first()
+    logout_user(client)
+
+    create_user(client, "secuser", "testpass123")
+    add_list(client, "firstlist")
+    firstlist = Wishlist.query.filter_by(name="firstlist").first()
+    add_item(client, "firstitem", firstlist.id)
+    firstitem = Item.query.filter_by(name="firstitem").first()
+    share_list(client, firstlist.id, testuser.id)
+    add_list(client, "secondlist")
+    secondlist = Wishlist.query.filter_by(name="secondlist").first()
+    add_item(client, "seconditem", secondlist.id)
+    seconditem = Item.query.filter_by(name="seconditem").first()
+
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 403, "Seznam je Váš nebo s Vámi není sdílený.")
+
+    response = reserve_item(client, 55)
+    respond_error(response, 404, "Položka neexistuje.")
+
+    logout_user(client)
+    login_user(client, "testuser", "testpass123")
+
+    response = reserve_item(client, firstitem.id)
+    assert response.status_code == 200
+    assert firstitem.state == ItemState.reserved
+
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
+
+    claim_item(client, firstitem.id)
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
+
+    delete_item(client, firstitem.id)
+    response = reserve_item(client, firstitem.id)
+    respond_error(response, 400, "Položka je zarezervovaná, předaná nebo smazaná.")
+
+    response = reserve_item(client, seconditem.id)
+    respond_error(response, 403, "Seznam je Váš nebo s Vámi není sdílený.")
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")

@@ -28,3 +28,12 @@ def respond_error(response, status, msg):
 
 def add_item(client, item_name, list_id):
     return client.post(f"/{list_id}/item", data={"new_item_name": item_name})
+
+def reserve_item(client, item_id):
+    return client.patch(f"/item/reserve/{item_id}")
+
+def claim_item(client, item_id):
+    return client.patch(f"/item/claim/{item_id}")
+
+def delete_item(client, item_id):
+    return client.patch(f"/item/delete/{item_id}")

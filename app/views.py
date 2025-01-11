@@ -58,10 +58,10 @@ def reserve_item(id):
     item = Item.query.filter_by(id=id).first()
     if not item:
         return "Položka neexistuje.", 404
-    if item.state != ItemState.active and item.state != ItemState.reserved:
+    if item.state != ItemState.active:
         return "Položka je zarezervovaná, předaná nebo smazaná.", 400
     if current_user not in item.wishlist.shared_with:
-        return "Seznam s Vámi není sdílený.", 403
+        return "Seznam je Váš nebo s Vámi není sdílený.", 403
     if item.state == ItemState.active:
         item.state = ItemState.reserved
     else:
