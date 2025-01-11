@@ -25,3 +25,6 @@ def unshare_list(client, list_id, user_id):
 def respond_error(response, status, msg):
     assert response.status_code == status
     assert response.text == msg
+
+def add_item(client, item_name, list_id):
+    return client.post(f"/{list_id}/item", data={"new_item_name": item_name})

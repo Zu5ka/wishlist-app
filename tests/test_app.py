@@ -1,7 +1,7 @@
-from app.models import Wishlist, User
+from app.models import Wishlist, User, Item
 from .utils import (create_user, login_user, add_list,
                     share_list, logout_user, unshare_list,
-                    respond_error)
+                    respond_error, add_item)
 from .config_test import app, client
 
 def test_register(client):
@@ -168,9 +168,9 @@ def test_logout(client):
 
 def test_add_list(client, app):
     create_user(client, "testuser", "testpass123")
-    add_list(client, "new_list")
+    add_list(client, "newlist")
     with app.app_context():
-        assert Wishlist.query.filter_by(name="new_list").first() is not None
+        assert Wishlist.query.filter_by(name="newlist").first() is not None
 
     response = add_list(client, "   ")
     assert response.text == "Název seznamu musí obsahovat alespoň jeden znak."
@@ -181,8 +181,8 @@ def test_add_list(client, app):
 def test_show_list(client):
     create_user(client, "testuser", "testpass123")
     test_user = User.query.filter_by(username="testuser").first()
-    add_list(client, "new_list")
-    list = Wishlist.query.filter_by(name="new_list").first()
+    add_list(client, "newlist")
+    list = Wishlist.query.filter_by(name="newlist").first()
     response = client.get(f"/wishlist/{list.id}")
     assert response.status_code == 200
 
@@ -205,6 +205,39 @@ def test_show_list(client):
 
     response = client.get(f"/wishlist/{list.id}")
     assert response.status_code == 200
+    
+def test_add_item(client):
+    create_user(client, "testuser", "testpass123")
+    testuser = User.query.filter_by(username="testuser").first()
+    add_list(client, "emlist")
+    emlist = Wishlist.query.filter_by(name="emlist").first()
+    logout_user(client)
+
+    create_user(client, "secuser", "testpass123")
+    secuser = User.query.filter_by(username="secuser").first()
+    add_list(client, "newlist")
+    newlist = Wishlist.query.filter_by(name="newlist").first()
+
+    response = add_item(client, "", newlist.id)
+    respond_error(response, 400, "Název položky musí obsahovat alespoň jeden znak.")
+
+    response = add_item(client, "       ", newlist.id)
+    respond_error(response, 400, "Název položky musí obsahovat alespoň jeden znak.")
+
+    response = add_item(client, "newitem", emlist.id)
+    respond_error(response, 403, "Seznam není Váš.")
+
+    response = add_item(client, "newitem", newlist.id)
+    assert response.status_code == 200
+    assert Item.query.filter_by(name="newitem").first() is not None
+
+    share_list(client, newlist.id, testuser.id)
+    logout_user(client)
+    login_user(client, "testuser", "testpass123")
+
+    response = add_item(client, "newitem", newlist.id)
+    respond_error(response, 403, "Seznam není Váš.")
+    
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")
@@ -218,8 +251,8 @@ def test_share_list(client):
     create_user(client, "testuser2", "testpass123")
     s_user = User.query.filter_by(username="testuser2").first()
     s_user_id = s_user.id
-    add_list(client, "new_list")
-    s_list = Wishlist.query.filter_by(name="new_list").first()
+    add_list(client, "newlist")
+    s_list = Wishlist.query.filter_by(name="newlist").first()
     s_list_id = s_list.id
 
     response = share_list(client, s_list_id, 55)
@@ -263,30 +296,30 @@ def test_unshare_list(client):
 
     create_user(client, "secuser", "testpass123")
     secuser = User.query.filter_by(username="secuser").first()
-    add_list(client, "new_list")
-    new_list = Wishlist.query.filter_by(name="new_list").first()
-    share_list(client, new_list.id, testuser.id)
+    add_list(client, "newlist")
+    newlist = Wishlist.query.filter_by(name="newlist").first()
+    share_list(client, newlist.id, testuser.id)
 
     response = unshare_list(client, 55, testuser.id)
     respond_error(response, 404, "Uživatel nebo seznam neexistuje.")
-    response = unshare_list(client, new_list.id, 55)
+    response = unshare_list(client, newlist.id, 55)
     respond_error(response, 404, "Uživatel nebo seznam neexistuje.")
 
-    response = unshare_list(client, new_list.id, secuser.id)
+    response = unshare_list(client, newlist.id, secuser.id)
     respond_error(response, 400, "Nelze provést s vlastním seznamem.")
 
-    response = unshare_list(client, new_list.id, user_ns.id)
+    response = unshare_list(client, newlist.id, user_ns.id)
     respond_error(response, 400, "Seznam není sdílený s tímto uživatelem.")
 
-    response = unshare_list(client, new_list.id, testuser.id)
+    response = unshare_list(client, newlist.id, testuser.id)
     assert response.status_code == 200
     assert "HX-Trigger" in response.headers
-    assert not testuser in new_list.shared_with
+    assert not testuser in newlist.shared_with
 
-    share_list(client, new_list.id, testuser.id)
+    share_list(client, newlist.id, testuser.id)
 
     logout_user(client)
     login_user(client, "testuser", "testpass123")
 
-    response = unshare_list(client, new_list.id, testuser.id)
+    response = unshare_list(client, newlist.id, testuser.id)
     respond_error(response, 403, "Seznam patří jinému uživateli.")
