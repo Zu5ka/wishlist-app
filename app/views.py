@@ -15,7 +15,7 @@ def index():
 def add_list():
     list_name = request.form.get('list_name')
     if not list_name or list_name.strip() == "":
-        return "Název seznamu musí obsahovat alespoň jeden znak."
+        return "Název seznamu musí obsahovat alespoň jeden znak.", 400
     wishlist = Wishlist(name=list_name, user_id=current_user.id)
     db.session.add(wishlist)
     db.session.commit()
@@ -34,12 +34,12 @@ def show_list(list_id):
 def add_item(list_id):
     item_name = request.form.get('new_item_name')
     if not item_name or item_name.strip() == "":
-        return "Název položky musí obsahovat alespoň jeden znak."
+        return "Název položky musí obsahovat alespoň jeden znak.", 400
     list = Wishlist.query.filter_by(id=list_id).first()
     if not list:
-        return "Seznam neexistuje."
+        return "Seznam neexistuje.", 404
     if list.user != current_user:
-        return "Seznam není Váš."
+        return "Seznam není Váš.", 403
     item = Item(name=item_name, wishlist_id=list_id)
     db.session.add(item)
     db.session.commit()
@@ -50,11 +50,11 @@ def add_item(list_id):
 def reserve_item(id):
     item = Item.query.filter_by(id=id).first()
     if not item:
-        return "Položka neexistuje."
+        return "Položka neexistuje.", 404
     if item.state != ItemState.active and item.state != ItemState.reserved:
-        return "Položka je zarezervovaná, předaná nebo smazaná."
+        return "Položka je zarezervovaná, předaná nebo smazaná.", 400
     if not current_user in item.wishlist.shared_with:
-        return "Seznam s Vámi není sdílený."
+        return "Seznam s Vámi není sdílený.", 403
     if item.state == ItemState.active:
         item.state = ItemState.reserved
     else:
@@ -67,11 +67,11 @@ def reserve_item(id):
 def claim_item(id):
     item = Item.query.filter_by(id=id).first()
     if not item:
-        return "Položka neexistuje."
+        return "Položka neexistuje.", 404
     if item.state == ItemState.deleted:
-        return "Položka už je smazaná."
+        return "Položka už je smazaná.", 400
     if current_user != item.wishlist.user:
-        return "Seznam není Váš."
+        return "Seznam není Váš.", 403
     if item.state != ItemState.claimed:
         item.state = ItemState.claimed
     else:
@@ -84,11 +84,11 @@ def claim_item(id):
 def archive_list(id):
     list = Wishlist.query.filter_by(id=id).first()
     if not list:
-        return "Seznam neexistuje."
+        return "Seznam neexistuje.", 404
     if list.state == ListState.deleted:
-        return "Seznam je smazaný."
+        return "Seznam je smazaný.", 400
     if current_user != list.user:
-        return "Seznam není váš."
+        return "Seznam není váš.", 403
     if list.state != ListState.archived:
         list.state = ListState.archived
     else:
@@ -101,9 +101,9 @@ def archive_list(id):
 def delete_list(id):
     list = Wishlist.query.filter_by(id=id).first()
     if not list:
-        return "Seznam neexistuje."
+        return "Seznam neexistuje.", 404
     if list.user_id != current_user.id:
-        return "Seznam patří jinému uživateli."
+        return "Seznam patří jinému uživateli.", 403
     list.state = 2
     db.session.commit()
     return render_template("_partials/_placeholder.html", list=list, oob=True), 200
@@ -113,9 +113,9 @@ def delete_list(id):
 def delete_item(id):
     item = Item.query.filter_by(id=id).first()
     if not item:
-        return "Položka neexistuje."
+        return "Položka neexistuje.", 404
     if item.wishlist.user_id != current_user.id:
-        return "Položka v tomto seznamu neexistuje."
+        return "Položka neexistuje ve Vašem seznamu.", 403
     item.state = 3
     db.session.commit()
     return "", 200
@@ -126,7 +126,7 @@ def search_user(list_id):
     user_query = request.form.get('search')
     list = Wishlist.query.filter_by(id=list_id).first()
     if not list:
-        return "Seznam neexistuje."
+        return "Seznam neexistuje.", 404
     if not user_query:
         return render_template("_partials/_user_search_results.html", results=[], list=list)
     users = User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
@@ -139,13 +139,13 @@ def share_list(list_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     list = Wishlist.query.filter_by(id=list_id).first()
     if not user or not list:
-        return "Uživatel nebo seznam neexistuje."
+        return "Uživatel nebo seznam neexistuje.", 404
     if list.user_id != current_user.id:
-        return "Seznam patří jinému uživateli."
+        return "Seznam patří jinému uživateli.", 403
     if user_id == current_user.id:
-        return "Nelze nasdílet vlastní seznam."
+        return "Nelze nasdílet vlastní seznam.", 400
     if user in list.shared_with:
-        return "Seznam již je nasdílený."
+        return "Seznam již je nasdílený.", 400
     list.shared_with.append(user)
     db.session.commit()
     return render_template("_partials/_shared_user.html", user=user, list=list, oob=True)
@@ -156,13 +156,13 @@ def unshare_list(list_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     list = Wishlist.query.filter_by(id=list_id).first()
     if not user or not list:
-        return "Uživatel nebo seznam neexistuje."
+        return "Uživatel nebo seznam neexistuje.", 404
     if list.user_id != current_user.id:
-        return "Seznam patří jinému uživateli."
+        return "Seznam patří jinému uživateli.", 403
     if user_id == current_user.id:
-        return "Nelze provést s vlastním seznamem."
+        return "Nelze provést s vlastním seznamem.", 400
     if not user in list.shared_with:
-        return "Seznam už je nasdílený."
+        return "Seznam už je nasdílený.", 400
     list.shared_with.remove(user)
     db.session.commit()
     return "", 200, {"HX-Trigger" : "search-refresh"}
