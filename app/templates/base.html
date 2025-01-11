@@ -14,5 +14,16 @@
 </head>
 <body hx-boost>
     {% block content %}{% endblock %}
+
+    <!-- This part of code is copied from https://stackoverflow.com/a/73593579 -->
+    <script>
+        document.body.addEventListener('htmx:beforeOnLoad', function(evt) {
+            if (evt.detail.xhr.status >= 400 && evt.detail.xhr.status < 500) {
+                evt.detail.shouldSwap = true;
+                evt.detail.idError = false;
+            }
+        });
+    </script>
+
 </body>
 </html>
