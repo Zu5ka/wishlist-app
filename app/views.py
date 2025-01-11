@@ -35,6 +35,11 @@ def add_item(list_id):
     item_name = request.form.get('new_item_name')
     if not item_name or item_name.strip() == "":
         return "Název položky musí obsahovat alespoň jeden znak."
+    list = Wishlist.query.filter_by(id=list_id).first()
+    if not list:
+        return "Seznam neexistuje."
+    if list.user != current_user:
+        return "Seznam není Váš."
     item = Item(name=item_name, wishlist_id=list_id)
     db.session.add(item)
     db.session.commit()
