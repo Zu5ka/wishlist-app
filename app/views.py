@@ -25,8 +25,8 @@ def add_list():
 @login_required
 def show_list(list_id):
     list = Wishlist.query.filter_by(id=list_id).first()
-    if list.user_id != current_user.id or not current_user in list.shared_with:
-        return "Nemáte právo zobrazit tento seznam"
+    if list.user_id != current_user.id and not current_user in list.shared_with:
+        return "Nemáte právo zobrazit tento seznam", 403
     return render_template("_partials/_list.html", list=list, current_user=current_user)
 
 @views_blueprint.route("/<int:list_id>/item", methods=['POST'])
