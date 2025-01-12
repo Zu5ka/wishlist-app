@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
+from enum import IntEnum
 from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
-from enum import IntEnum
 from . import db
 
 
@@ -47,10 +47,14 @@ class User(UserMixin, db.Model):
 
     def search_to_share(self, wishlist, user_query: str) -> list:
         users = (
-            User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
+            User.query.filter(User.username.ilike("%" + user_query + "%"))
+            .limit(20)
+            .all()
         )
         return [x for x in users if x not in wishlist.shared_with and x != self]
 
+# third-party library
+# pylint: disable=too-few-public-methods
 class Wishlist(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
@@ -65,7 +69,8 @@ class Wishlist(db.Model):
         secondary=wishlist_shares, back_populates="shared_with_me"
     )
 
-
+# third-party library
+# pylint: disable=too-few-public-methods
 class Item(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()

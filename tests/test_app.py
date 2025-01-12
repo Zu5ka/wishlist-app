@@ -1,9 +1,21 @@
 from app.models import Wishlist, User, Item, ItemState, ListState
-from .utils import (create_user, login_user, add_list,
-                    share_list, logout_user, unshare_list,
-                    respond_error, add_item, reserve_item, claim_item,
-                    delete_item, archive_list, delete_list, search_user)
-from .config_test import app, client
+from .utils import (
+    create_user,
+    login_user,
+    add_list,
+    share_list,
+    logout_user,
+    unshare_list,
+    respond_error,
+    add_item,
+    reserve_item,
+    claim_item,
+    delete_item,
+    archive_list,
+    delete_list,
+    search_user,
+)
+
 
 def test_register(client):
     response = client.post(
@@ -179,34 +191,36 @@ def test_add_list(client, app):
     response = add_list(client, "")
     assert response.text == "Název seznamu musí obsahovat alespoň jeden znak."
 
+
 def test_show_list(client):
     create_user(client, "testuser", "testpass123")
     test_user = User.query.filter_by(username="testuser").first()
     add_list(client, "newlist")
-    list = Wishlist.query.filter_by(name="newlist").first()
-    response = client.get(f"/wishlist/{list.id}")
+    newlist = Wishlist.query.filter_by(name="newlist").first()
+    response = client.get(f"/wishlist/{newlist.id}")
     assert response.status_code == 200
 
     logout_user(client)
 
     create_user(client, "testuser2", "testpass123")
-    response = client.get(f"/wishlist/{list.id}")
+    response = client.get(f"/wishlist/{newlist.id}")
     assert response.status_code == 403
     assert response.text == "Nemáte právo zobrazit tento seznam"
 
     add_list(client, "another_list")
-    list = Wishlist.query.filter_by(name="another_list").first()
-    response = client.get(f"/wishlist/{list.id}")
+    newlist = Wishlist.query.filter_by(name="another_list").first()
+    response = client.get(f"/wishlist/{newlist.id}")
     assert response.status_code == 200
 
-    share_list(client, list.id, test_user.id)
+    share_list(client, newlist.id, test_user.id)
 
     logout_user(client)
     login_user(client, "testuser", "testpass123")
 
-    response = client.get(f"/wishlist/{list.id}")
+    response = client.get(f"/wishlist/{newlist.id}")
     assert response.status_code == 200
-    
+
+
 def test_add_item(client):
     create_user(client, "testuser", "testpass123")
     testuser = User.query.filter_by(username="testuser").first()
@@ -215,7 +229,6 @@ def test_add_item(client):
     logout_user(client)
 
     create_user(client, "secuser", "testpass123")
-    secuser = User.query.filter_by(username="secuser").first()
     add_list(client, "newlist")
     newlist = Wishlist.query.filter_by(name="newlist").first()
 
@@ -238,6 +251,7 @@ def test_add_item(client):
 
     response = add_item(client, "newitem", newlist.id)
     respond_error(response, 403, "Seznam není Váš.")
+
 
 def test_reserve_item(client):
     create_user(client, "testuser", "testpass123")
@@ -296,13 +310,13 @@ def test_reserve_item(client):
     response = reserve_item(client, firstitem.id)
     respond_error(response, 400, "Položka je předaná nebo smazaná.")
 
+
 def test_claim_item(client):
     create_user(client, "firstuser", "testpass123")
     firstuser = User.query.filter_by(username="firstuser").first()
     logout_user(client)
 
     create_user(client, "secuser", "testpass123")
-    secuser = User.query.filter_by(username="secuser").first()
     add_list(client, "firstlist")
     firstlist = Wishlist.query.filter_by(name="firstlist").first()
     add_item(client, "firstitem", firstlist.id)
@@ -338,6 +352,7 @@ def test_claim_item(client):
     response = claim_item(client, firstitem.id)
     respond_error(response, 400, "Položka už je smazaná.")
 
+
 def test_archive_list(client):
     create_user(client, "seconduser", "testpass123")
     seconduser = User.query.filter_by(username="seconduser").first()
@@ -346,7 +361,6 @@ def test_archive_list(client):
     logout_user(client)
 
     create_user(client, "firstuser", "testpass123")
-    firstuser = User.query.filter_by(username="firstuser").first()
     add_list(client, "firstlist")
     firstlist = Wishlist.query.filter_by(name="firstlist").first()
 
@@ -377,9 +391,9 @@ def test_archive_list(client):
     response = archive_list(client, sharedlist.id)
     respond_error(response, 403, "Seznam není váš.")
 
+
 def test_delete_list(client):
     create_user(client, "firstuser", "testpass123")
-    firstuser = User.query.filter_by(username="firstuser").first()
     add_list(client, "firstlist")
     firstlist = Wishlist.query.filter_by(name="firstlist").first()
 
@@ -398,13 +412,13 @@ def test_delete_list(client):
     response = delete_list(client, secondlist.id)
     respond_error(response, 403, "Seznam patří jinému uživateli.")
 
+
 def test_delete_item(client):
     create_user(client, "seconduser", "testpass123")
     seconduser = User.query.filter_by(username="seconduser").first()
     logout_user(client)
 
     create_user(client, "firstuser", "testpass123")
-    firstuser = User.query.filter_by(username="firstuser").first()
     add_list(client, "firstlist")
     firstlist = Wishlist.query.filter_by(name="firstlist").first()
     add_item(client, "firstitem", firstlist.id)
@@ -420,10 +434,14 @@ def test_delete_item(client):
 
     archive_list(client, firstlist.id)
     response = delete_item(client, seconditem.id)
-    respond_error(response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu")
+    respond_error(
+        response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu"
+    )
     delete_list(client, firstlist.id)
     response = delete_item(client, seconditem.id)
-    respond_error(response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu")
+    respond_error(
+        response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu"
+    )
 
     add_list(client, "secondlist")
     secondlist = Wishlist.query.filter_by(name="secondlist").first()
@@ -435,6 +453,7 @@ def test_delete_item(client):
     login_user(client, "seconduser", "testpass123")
     response = delete_item(client, thirditem.id)
     respond_error(response, 403, "Položka neexistuje ve Vašem seznamu.")
+
 
 def test_search_user(client):
     create_user(client, "firstuser", "testpass123")
@@ -479,6 +498,7 @@ def test_search_user(client):
     login_user(client, "seconduser", "testpass123")
     response = search_user(client, firstlist.id, "er")
     respond_error(response, 403, "Seznam není Váš.")
+
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")
@@ -527,6 +547,7 @@ def test_share_list(client):
     assert response.status_code == 403
     assert response.text == "Seznam patří jinému uživateli."
 
+
 def test_unshare_list(client):
     create_user(client, "user_ns", "testpass123")
     user_ns = User.query.filter_by(username="user_ns").first()
@@ -555,7 +576,7 @@ def test_unshare_list(client):
     response = unshare_list(client, newlist.id, testuser.id)
     assert response.status_code == 200
     assert "HX-Trigger" in response.headers
-    assert not testuser in newlist.shared_with
+    assert testuser not in newlist.shared_with
 
     share_list(client, newlist.id, testuser.id)
 
