@@ -1,7 +1,8 @@
 from app.models import Wishlist, User, Item, ItemState, ListState
 from .utils import (create_user, login_user, add_list,
                     share_list, logout_user, unshare_list,
-                    respond_error, add_item, reserve_item, claim_item, delete_item)
+                    respond_error, add_item, reserve_item, claim_item,
+                    delete_item, archive_list, delete_list)
 from .config_test import app, client
 
 def test_register(client):
@@ -336,6 +337,46 @@ def test_claim_item(client):
     assert firstitem.state == ItemState.deleted
     response = claim_item(client, firstitem.id)
     respond_error(response, 400, "Položka už je smazaná.")
+
+def test_archive_list(client):
+    create_user(client, "seconduser", "testpass123")
+    seconduser = User.query.filter_by(username="seconduser").first()
+    add_list(client, "secondlist")
+    secondlist = Wishlist.query.filter_by(name="secondlist").first()
+    logout_user(client)
+
+    create_user(client, "firstuser", "testpass123")
+    firstuser = User.query.filter_by(username="firstuser").first()
+    add_list(client, "firstlist")
+    firstlist = Wishlist.query.filter_by(name="firstlist").first()
+
+    response = archive_list(client, 55)
+    respond_error(response, 404, "Seznam neexistuje.")
+
+    response = archive_list(client, secondlist.id)
+    respond_error(response, 403, "Seznam není váš.")
+
+    response = archive_list(client, firstlist.id)
+    assert response.status_code == 200
+    assert firstlist.state == ListState.archived
+    response = archive_list(client, firstlist.id)
+    assert response.status_code == 200
+    assert firstlist.state != ListState.archived
+
+    delete_list(client, firstlist.id)
+    assert firstlist.state == ListState.deleted
+    response = archive_list(client, firstlist.id)
+    respond_error(response, 400, "Seznam je smazaný.")
+
+    add_list(client, "sharedlist")
+    sharedlist = Wishlist.query.filter_by(name="sharedlist").first()
+    share_list(client, sharedlist.id, seconduser.id)
+    logout_user(client)
+
+    login_user(client, "seconduser", "testpass123")
+    response = archive_list(client, sharedlist.id)
+    respond_error(response, 403, "Seznam není váš.")
+
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")

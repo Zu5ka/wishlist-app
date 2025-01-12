@@ -37,3 +37,9 @@ def claim_item(client, item_id):
 
 def delete_item(client, item_id):
     return client.delete(f"/item/delete/{item_id}")
+
+def archive_list(client, list_id):
+    return client.patch(f"/wishlist/archive/{list_id}")
+
+def delete_list(client, list_id):
+    return client.delete(f"/wishlist/delete/{list_id}")
