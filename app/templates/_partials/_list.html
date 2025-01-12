@@ -31,6 +31,7 @@
 
         {% if list.user.id == current_user.id %}
         {% if list.state != ListState.ARCHIVED %}
+        <!-- inspired by https://htmx.org/attributes/hx-on/ -->
         <section class="uk-flex uk-flex-row uk-flex-center uk-flex-middle uk-padding-top-small"
                  hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
                  hx-target="#items-{{ list.id }}"
