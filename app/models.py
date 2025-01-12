@@ -1,4 +1,4 @@
-from enum import IntEnum
+fYrom enum import IntEnum
 from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey

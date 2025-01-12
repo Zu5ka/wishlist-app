@@ -8,7 +8,7 @@ This app should help people to share what they wish for eg. birthdays without ru
 
 ## Necessary dependencies
 
-- flask version
+- flask
 - Flask-SQLAlchemy
 - FLask-Login
 - waitress
