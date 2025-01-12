@@ -6,6 +6,8 @@ The user with whom the wishlist is shared can *reserve* items on it lists. The o
 
 This app should help people to share what they wish for eg. birthdays without ruining the joy of a surprise - the owners don't know which items will be given to them and by whom. It also prevents duplicates and the owner doesn't push anyone into giving them a specific thing.
 
+You can find screenshots from the app in the screenshots directory.
+
 ## Necessary dependencies
 
 - flask
