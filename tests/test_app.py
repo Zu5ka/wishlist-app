@@ -377,6 +377,26 @@ def test_archive_list(client):
     response = archive_list(client, sharedlist.id)
     respond_error(response, 403, "Seznam není váš.")
 
+def test_delete_list(client):
+    create_user(client, "firstuser", "testpass123")
+    firstuser = User.query.filter_by(username="firstuser").first()
+    add_list(client, "firstlist")
+    firstlist = Wishlist.query.filter_by(name="firstlist").first()
+
+    response = delete_list(client, 55)
+    respond_error(response, 404, "Seznam neexistuje.")
+
+    response = delete_list(client, firstlist.id)
+    assert firstlist.state == ListState.deleted
+    assert response.status_code == 200
+
+    add_list(client, "secondlist")
+    secondlist = Wishlist.query.filter_by(name="secondlist").first()
+
+    logout_user(client)
+    create_user(client, "seconduser", "testpass123")
+    response = delete_list(client, secondlist.id)
+    respond_error(response, 403, "Seznam patří jinému uživateli.")
 
 def test_share_list(client):
     create_user(client, "testuser", "testpass123")
