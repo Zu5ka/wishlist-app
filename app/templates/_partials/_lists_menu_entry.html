@@ -5,6 +5,7 @@
     {% endif %}
 >
     <a href="#"
+       hx-on::before-request="document.querySelectorAll('[id^=\'modal-share-\']').forEach(el => el.remove())"
        hx-get="{{ url_for('views.show_list', list_id=list.id) }}"
        hx-target="#list_content"
     >{{ list.name }}</a>

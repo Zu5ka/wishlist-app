@@ -163,6 +163,7 @@ def archive_list(list_id):
         return "Seznam není váš.", 403
     if wishlist.state != ListState.ARCHIVED:
         wishlist.state = ListState.ARCHIVED
+        wishlist.shared_with = []
     else:
         wishlist.state = ListState.ACTIVE
     db.session.commit()
@@ -267,6 +268,8 @@ def share_list(list_id, user_id):
         return "Nelze nasdílet vlastní seznam.", 400
     if user in wishlist.shared_with:
         return "Seznam již je nasdílený.", 400
+    if wishlist.state != ItemState.ACTIVE:
+        return "Seznam je archivovaný nebo smazaný.", 400
     wishlist.shared_with.append(user)
     db.session.commit()
     return render_template(
@@ -293,6 +296,8 @@ def unshare_list(list_id, user_id):
         return "Nelze provést s vlastním seznamem.", 400
     if user not in wishlist.shared_with:
         return "Seznam není sdílený s tímto uživatelem.", 400
+    if wishlist.state != ItemState.ACTIVE:
+        return "Seznam je archivovaný nebo smazaný.", 400
     wishlist.shared_with.remove(user)
     db.session.commit()
     return "", 200, {"HX-Trigger": "search-refresh"}

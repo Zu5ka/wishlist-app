@@ -63,7 +63,7 @@
                hx-swap="innerHTML"
                hx-target="#list_content"
             >Smazat seznam</a>
-            <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share" uk-toggle>Sdílet seznam</a>
+            <a class="uk-button uk-button-default uk-margin-xsmall" href="#modal-share-{{list.id}}" uk-toggle>Sdílet seznam</a>
         </div>
 
         {% else %}
@@ -73,6 +73,7 @@
                hx-patch="{{ url_for('views.archive_list', list_id=list.id) }}"
                hx-swap="outerHTML"
                hx-target="#list-view-{{ list.id }}"
+               hx-on::before-request="document.querySelectorAll('[id^=\'modal-share-\']').forEach(el => el.remove())"
             >Vyjmout z archivu</a>
         </div>
         {% endif %}
@@ -80,7 +81,7 @@
 
     </div>
     <div class="hide-modal">
-        <div id="modal-share" uk-modal>
+        <div id="modal-share-{{list.id}}" uk-modal>
             <div class="uk-modal-dialog">
                 <button class="uk-modal-close-default" type="button" uk-close></button>
                 <div class="uk-modal-header">
@@ -99,15 +100,14 @@
                                name="search"
                                placeholder="Sdílet s:"
                                hx-post="{{ url_for('views.search_user', list_id=list.id) }}"
-                               hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load, search-refresh from:body"
+                               hx-trigger="input changed delay:500ms, keyup[key=='Enter'], search-refresh from:body"
                                hx-target="#search-results"
-                               hx-swap="outerHTML">
+                               hx-swap="innerHTML">
                     </form>
                     {% include "_partials/_user_search_results.html" %}
                 </div>
 
                 <div class="uk-modal-footer uk-text-right">
-                    <!-- TODO: dialog shouldnt close until success -->
                     <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
                 </div>
             </div>
