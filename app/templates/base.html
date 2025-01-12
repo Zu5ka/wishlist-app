@@ -1,29 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-    <!-- UIkit CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/css/uikit.min.css" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit-icons.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body hx-boost>
-    {% block content %}{% endblock %}
+        <title>Title</title>
 
-    <!-- This script is copied from https://stackoverflow.com/a/73593579 -->
-    <script>
-        document.body.addEventListener('htmx:beforeOnLoad', function(evt) {
-            if (evt.detail.xhr.status >= 400 && evt.detail.xhr.status < 500) {
-                evt.detail.shouldSwap = true;
-                evt.detail.idError = false;
-            }
-        });
-    </script>
+        <!-- HTMX -->
+        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 
-</body>
+        <!-- UIkit CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/css/uikit.min.css" />
+
+        <!-- UIkit JS -->
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.17/dist/js/uikit-icons.min.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body hx-boost>
+        {% block content %}{% endblock %}
+
+        <script>
+         // This part of code is copied from https://stackoverflow.com/a/73593579
+         document.body.addEventListener('htmx:beforeOnLoad', function(evt) {
+             if (evt.detail.xhr.status >= 400 && evt.detail.xhr.status < 500) {
+                 evt.detail.shouldSwap = true;
+                 evt.detail.idError = false;
+             }
+         });
+
+         // https://stackoverflow.com/questions/4917664/detect-viewport-orientation-if-orientation-is-portrait-display-alert-message-ad
+         function isMobile() {
+             // Width-based check
+             const isNarrow = window.matchMedia('(max-width: 959px)').matches;
+
+                 // Orientation-based checks
+                 const isPortrait = (
+                     window.orientation === 0 || // iOS/Android
+                     window.orientation === undefined && // Desktop browsers
+                     (screen.orientation?.type?.includes('portrait') || // Modern browsers
+                      window.innerHeight > window.innerWidth) // Fallback
+                 );
+
+                 return isNarrow || isPortrait;
+         }
+
+         function adjustCardHeight() {
+             if (isMobile()) {
+                 const navbar = document.querySelector('.uk-navbar-container');
+                 const navHeight = navbar ? navbar.offsetHeight : 0;
+                 const cards = document.querySelectorAll('#list-card');
+                 cards.forEach(card => {
+                     card.style.height = `calc(80vh - ${navHeight * 2}px)`;
+                     card.style.marginTop = `-25%`;
+                 });
+             }
+         }
+
+         window.addEventListener('resize', adjustCardHeight);
+         window.addEventListener('orientationchange', adjustCardHeight);
+         document.addEventListener('DOMContentLoaded', adjustCardHeight);
+         document.body.addEventListener('htmx:afterSettle', adjustCardHeight);
+        </script>
+    </body>
 </html>

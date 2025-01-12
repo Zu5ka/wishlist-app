@@ -1,51 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<nav class="uk-navbar-container uk-hidden@m uk-navbar-transparent" uk-navbar>
+    <div class="uk-navbar-left">
+        <a class="uk-navbar-toggle" uk-toggle="target: #offcanvas-menu">
+            <span uk-navbar-toggle-icon class="uk-padding-small"></span>
+        </a>
+    </div>
+    <div class="uk-navbar-right">
+        <span class="uk-margin-right">{{ current_user.username }}</span>
+        <a href="" class="uk-margin-right" uk-icon="icon: sign-out"
+           hx-post="{{ url_for('auth.logout') }}"
+           hx-confirm="Opravdu se chcete odhlásit?">
+        </a>
+    </div>
+</nav>
+<div id="offcanvas-menu" uk-offcanvas>
+    <div class="uk-offcanvas-bar">
+        <button class="uk-offcanvas-close" type="button" uk-close></button>
+        <div class="uk-margin">
+            <a class="uk-button uk-button-default uk-margin-xsmall uk-width-1-1"
+               href="#modal-sections" uk-toggle>Nový seznam</a>
+        </div>
+        {% include "_partials/_lists.html" %}
+    </div>
+</div>
+
 <main uk-grid class="uk-grid-collapse">
-    <aside class="uk-padding uk-width-1-4@m uk-background-muted">
+    <aside class="uk-padding uk-width-1-4@m uk-background-muted uk-visible@m">
         <div class="uk-flex uk-flex-between uk-flex-middle">
             <span class="uk-margin-remove uk-text-large">{{ current_user.username }}</span>
-            <a href="" uk-icon="icon: sign-out" hx-post="{{ url_for('auth.logout') }}"
+            <a href="" uk-icon="icon: sign-out"
+               hx-post="{{ url_for('auth.logout') }}"
                hx-confirm="Opravdu se chcete odhlásit?"></a>
         </div>
         <hr>
-
-        <a class="uk-button uk-button-default uk-margin-xsmall uk-width-1-1" href="#modal-sections" uk-toggle>Nový
-            seznam</a>
-        <div id="modal-sections" uk-modal>
-            <div class="uk-modal-dialog">
-                <button class="uk-modal-close-default" type="button" uk-close></button>
-                <div class="uk-modal-header">
-                    <h2 class="uk-modal-title">Nový seznam</h2>
-                </div>
-                <div class="uk-modal-body">
-                    <input id="new_list_input"
-                           class="uk-input uk-margin-xsmall-bottom" type="text" placeholder="název seznamu"
-                           hx-trigger="keyup[key == 'Enter']"
-                           hx-post="{{ url_for('views.add_list') }}"
-                           hx-target="#my_lists"
-                           hx-swap="beforeend"
-                           hx-on::after-request="this.value = ''"
-                           name="list_name" required>
-                    <span id="errors" class="uk-text-danger"></span>
-                </div>
-                <div class="uk-modal-footer uk-text-right">
-                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
-                    <button class="uk-button uk-button-primary"
-                            type="button"
-                            hx-post="{{ url_for('views.add_list') }}"
-                            hx-on::after-request="document.querySelector('#new_list_input').value = ''"
-                            hx-include="#new_list_input"
-                            hx-target="#my_lists"
-                            hx-swap="beforeend"
-                    >Vytvořit
-                    </button>
-                </div>
-            </div>
-        </div>
-
+        <a class="uk-button uk-button-default uk-margin-xsmall uk-width-1-1"
+           href="#modal-sections" uk-toggle>Nový seznam</a>
         {% include "_partials/_lists.html" %}
-
     </aside>
 
     <div id="list_content" class="uk-width-expand@m uk-flex uk-flex-center">
@@ -53,4 +46,36 @@
     </div>
 </main>
 
+<div id="modal-sections" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">Nový seznam</h2>
+        </div>
+        <div class="uk-modal-body">
+            <input id="new_list_input"
+                   class="uk-input uk-margin-xsmall-bottom"
+                   type="text"
+                   placeholder="název seznamu"
+                   hx-trigger="keyup[key == 'Enter']"
+                   hx-post="{{ url_for('views.add_list') }}"
+                   hx-target="#my_lists"
+                   hx-swap="beforeend"
+                   hx-on::after-request="this.value = ''"
+                   name="list_name" required>
+            <span id="errors" class="uk-text-danger"></span>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
+            <button class="uk-button uk-button-primary"
+                    type="button"
+                    hx-post="{{ url_for('views.add_list') }}"
+                    hx-on::after-request="document.querySelector('#new_list_input').value = ''"
+                    hx-include="#new_list_input"
+                    hx-target="#my_lists"
+                    hx-swap="beforeend"
+            >Vytvořit</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
