@@ -19,19 +19,23 @@
                     <h2 class="uk-modal-title">Nový seznam</h2>
                 </div>
                 <div class="uk-modal-body">
-                    <form id="new_list_form">
-                        <input class="uk-input uk-margin-xsmall-bottom" type="text" placeholder="název seznamu"
-                               name="list_name" required>
-                    </form>
+                    <input id="new_list_input"
+                           class="uk-input uk-margin-xsmall-bottom" type="text" placeholder="název seznamu"
+                           hx-trigger="keyup[key == 'Enter']"
+                           hx-post="{{ url_for('views.add_list') }}"
+                           hx-target="#my_lists"
+                           hx-swap="beforeend"
+                           hx-on::after-request="this.value = ''"
+                           name="list_name" required>
                     <span id="errors" class="uk-text-danger"></span>
                 </div>
                 <div class="uk-modal-footer uk-text-right">
-                    <!-- TODO: dialog shouldnt close until succes -->
-                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zrušit</button>
-                    <button class="uk-button uk-button-primary uk-modal-close"
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
+                    <button class="uk-button uk-button-primary"
                             type="button"
                             hx-post="{{ url_for('views.add_list') }}"
-                            hx-include="#new_list_form"
+                            hx-on::after-request="document.querySelector('#new_list_input').value = ''"
+                            hx-include="#new_list_input"
                             hx-target="#my_lists"
                             hx-swap="beforeend"
                     >Vytvořit

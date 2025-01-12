@@ -36,15 +36,16 @@
                  hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
                  hx-target="#items-{{ list.id }}"
                  hx-include="[name='new_item_name']"
-                 hx-trigger="click from:a, keyup[key=='Enter'] from:input"
+                 hx-trigger="click from:#plus-btn, keyup[key=='Enter'] from:#new-item-input"
                  hx-on::before-request="Array.from(document.querySelector('#items-{{ list.id }}').childNodes).filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => n.remove())"
                  hx-on::after-request="this.querySelector('input').value = ''"
                  hx-swap="beforeend">
-           <a href="#" class="uk-margin-small-right uk-button uk-button-primary">
+           <a id="plus-btn" href="#" class="uk-margin-small-right uk-button uk-button-primary">
                <span uk-icon="plus"></span>
            </a>
            <!-- hx-on vymaze hodnotu inputu po submitu -->
            <input type="text"
+                  id="new-item-input"
                   class="uk-input"
                   placeholder="přidat položku"
                   name="new_item_name">
