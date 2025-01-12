@@ -1,31 +1,30 @@
 {% if oob %}
 <ul id="shared_users" hx-swap-oob="beforeend">
     <li id="remove-user-{{user.id}}">
-    <span class="uk-label uk-flex uk-flex-middle">
+    <span class="uk-label uk-flex uk-flex-middle"
+          hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
+          hx-swap="delete"
+          hx-target="#remove-user-{{user.id}}"
+          class="close-button">
         <span>
             {{ user.username }}
         </span>
-        <a href="" uk-icon="icon: close"
-           hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
-           hx-swap="delete"
-           hx-target="#remove-user-{{user.id}}"
-           class="close-button"
-        ></a>
+        <a href="" uk-icon="icon: close"></a>
     </span>
     </li>
 </ul>
 {% else %}
 <li id="remove-user-{{user.id}}">
-    <span class="uk-label uk-flex uk-flex-middle">
+    <span class="uk-label uk-flex uk-flex-middle"
+          uk-icon="icon: close"
+          hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
+          hx-swap="delete"
+          hx-target="#remove-user-{{user.id}}"
+          class="close-button">
         <span>
             {{ user.username }}
         </span>
-        <a href="" uk-icon="icon: close"
-           hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
-           hx-swap="delete"
-           hx-target="#remove-user-{{user.id}}"
-           class="close-button"
-        ></a>
+        <a href="#" uk-icon="icon: close"></a>
     </span>
 </li>
 {% endif %}
