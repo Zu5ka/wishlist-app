@@ -1,4 +1,5 @@
 from app.models import Wishlist, User, Item, ItemState, ListState
+from .config_test import app, create_app
 from .utils import (
     create_user,
     login_user,

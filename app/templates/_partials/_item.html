@@ -4,11 +4,11 @@
                class="uk-padding-small uk-checkbox"
                hx-target="#item-{{ item.id }}"
                {% if current_user.id == list.user_id %}
-                    hx-patch="{{ url_for('views.claim_item', id=item.id) }}"
+                    hx-patch="{{ url_for('views.claim_item', item_id=item.id) }}"
                     hx-swap="outerHTML"
                     {% if item.state == ItemState.claimed %} checked {% endif %}
                {% else %}
-                    hx-patch="{{ url_for('views.reserve_item', id=item.id) }}"
+                    hx-patch="{{ url_for('views.reserve_item', item_id=item.id) }}"
                     hx-swap="none"
                     {% if item.state == ItemState.reserved %} checked {% endif %}
                {% endif %}
@@ -28,7 +28,7 @@
         {% if current_user.id == list.user_id and list.state != ListState.archived %}
         <a href=""
            uk-icon="icon: trash"
-           hx-delete="{{ url_for('views.delete_item', id=item.id) }}"
+           hx-delete="{{ url_for('views.delete_item', item_id=item.id) }}"
            hx-target="#item-{{ item.id }}"
            hx-swap="delete"
            hx-confirm="Opravdu chcete tuto položku smazat?"

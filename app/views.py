@@ -52,7 +52,7 @@ def add_item(list_id):
     )
 
 
-@views_blueprint.route("/item/reserve/<int:id>", methods=["PATCH"])
+@views_blueprint.route("/item/reserve/<int:item_id>", methods=["PATCH"])
 @login_required
 def reserve_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
@@ -70,7 +70,7 @@ def reserve_item(item_id):
     return "", 200
 
 
-@views_blueprint.route("/item/claim/<int:id>", methods=["PATCH"])
+@views_blueprint.route("/item/claim/<int:item_id>", methods=["PATCH"])
 @login_required
 def claim_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
@@ -90,7 +90,7 @@ def claim_item(item_id):
     ), 200
 
 
-@views_blueprint.route("/wishlist/archive/<int:id>", methods=["PATCH"])
+@views_blueprint.route("/wishlist/archive/<int:list_id>", methods=["PATCH"])
 @login_required
 def archive_list(list_id):
     wishlist = Wishlist.query.filter_by(id=list_id).first()
@@ -110,7 +110,7 @@ def archive_list(list_id):
     ), 200
 
 
-@views_blueprint.route("/wishlist/delete/<int:id>", methods=["DELETE"])
+@views_blueprint.route("/wishlist/delete/<int:list_id>", methods=["DELETE"])
 @login_required
 def delete_list(list_id):
     wishlist = Wishlist.query.filter_by(id=list_id).first()
@@ -123,7 +123,7 @@ def delete_list(list_id):
     return render_template("_partials/_placeholder.html", list=wishlist, oob=True), 200
 
 
-@views_blueprint.route("/item/delete/<int:id>", methods=["DELETE"])
+@views_blueprint.route("/item/delete/<int:item_id>", methods=["DELETE"])
 @login_required
 def delete_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
