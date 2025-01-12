@@ -40,3 +40,6 @@ def archive_list(client, list_id):
 
 def delete_list(client, list_id):
     return client.delete(f"/wishlist/delete/{list_id}")
+
+def search_user(client, list_id, search):
+    return client.post(f"/user/search/{list_id}", data={"search": search})
