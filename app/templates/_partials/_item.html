@@ -11,6 +11,7 @@
                     hx-patch="{{ url_for('views.reserve_item', item_id=item.id) }}"
                     hx-swap="none"
                     {% if item.state == ItemState.RESERVED %} checked {% endif %}
+                    {% if item.state == ItemState.CLAIMED %} disabled="true" {% endif %}
                {% endif %}
                {% if list.state == ListState.ARCHIVED %}
                disabled="true"
