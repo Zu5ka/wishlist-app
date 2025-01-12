@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from enum import IntEnum
 from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -74,7 +73,6 @@ class Wishlist(db.Model):
 class Item(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    updated: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
     state: Mapped[int] = mapped_column(default=ItemState.ACTIVE)
     wishlist_id: Mapped[int] = mapped_column(ForeignKey("wishlist.id"))
     wishlist: Mapped["Wishlist"] = relationship(back_populates="items")
