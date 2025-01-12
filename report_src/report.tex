@@ -68,7 +68,7 @@ Pro tvorbu front-endu jsem zvolila front-end frame-work UIkit. To sice limituje 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Databáze}
-Pro správné fungování aplikace je potřebná databáze, která bude ukládat inforamce o uživatelích, seznamech a položkách. Pro implementaci databáze jsem zvolila sqlite, která pro projekt této velikosti stačí. Pro ORM jsem zvolila knihovnu SQLAlchemy. Databáze obsahuje entity User, Wishlist a Item, viz obrázek \ref{fig:db}. Důležitá je také tabulka, která obsahuje informace o tom, se kterými uživateli jsou jednotlivé seznamy nasdílené. Databáze nemá naimplementované povinné relace, nicméně API takovou situaci neumožňuje.
+Pro správné fungování aplikace je potřebná databáze, která bude ukládat inforamce o uživatelích, seznamech a položkách. Pro implementaci databáze jsem zvolila sqlite, která pro projekt této velikosti stačí. Pro ORM jsem zvolila knihovnu SQLAlchemy. Ta případně umožňuje použití jiných databází než sqlite bez práce navíc. Databáze obsahuje entity User, Wishlist a Item, viz obrázek \ref{fig:db}. Důležitá je také tabulka, která obsahuje informace o tom, se kterými uživateli jsou jednotlivé seznamy nasdílené. Databáze nemá naimplementovanou parcialitu jednotlivých vztahů, nicméně API neumožňuje situaci, která by databázi negativně ovlivnila.
 
 \begin{figure}[h]
   \centering\leavevmode
@@ -89,12 +89,12 @@ Webové aplikace jsou náchylné k útokům zvenčí. Uživatelská hesla jsou z
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --- ZAVER
 \section{Závěr}
-Díky této práci lépe rozumím fungování webových aplikací a umím vytvářet dynamické webové stránky. S výsledkem jsem spokojená, aplikace funguje a věřím, že bude užitečná. Do budoucnosti je možná spousta vylepšíní, například: 
+Díky této práci lépe rozumím fungování webových aplikací a umím vytvářet dynamické webové stránky. S výsledkem jsem spokojená, aplikace funguje a věřím, že bude užitečná. Do budoucnosti je možná spousta vylepšíní, například:
 \begin{itemize}
   \item sdílení pomocí odkazu
   \item možnost změny pořadí položek v seznamu
   \item zobrazení jména uživatele, který rezervoval položku
-  \item automatické mazání převzatých položek po nějaké době
+  \item automatické odrezervování položek po nějaké době
   \item možnost smazání uživatelského účtu
 \end{itemize}
 Nejsem zcela spokojená s UI designem webové stránky. Raději jsem se soustředila na ostatní funkcionality a implementaci v pythonu a výsledek je tak spíše proof of concept, nicméně design je podle mě zcela dostačující. Určitě by ale do budoucnosti zasloužil změny, aby byl uživatelsky příjemnější.
