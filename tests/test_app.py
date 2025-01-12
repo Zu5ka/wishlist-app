@@ -19,6 +19,7 @@ from .utils import (
 
 
 def test_register(client):
+    """Test the register endpoint."""
     response = client.post(
         "/register",
         data={
@@ -141,6 +142,7 @@ def test_register(client):
 
 
 def test_login(client):
+    """Test the login endpoint"""
     create_user(client, "testuser", "testpass123")
 
     response = login_user(client, "testuser", "testpass123")
@@ -174,6 +176,7 @@ def test_login(client):
 
 
 def test_logout(client):
+    """Test the logout endpoint"""
     create_user(client, "test", "testpass123")
     response = client.post("/logout")
     assert response.status_code == 200
@@ -181,6 +184,7 @@ def test_logout(client):
 
 
 def test_add_list(client, app):
+    """Test the endpoind for adding lists."""
     create_user(client, "testuser", "testpass123")
     add_list(client, "newlist")
     with app.app_context():
@@ -194,6 +198,7 @@ def test_add_list(client, app):
 
 
 def test_show_list(client):
+    """Test the endpoint for showing lists."""
     create_user(client, "testuser", "testpass123")
     test_user = User.query.filter_by(username="testuser").first()
     add_list(client, "newlist")
@@ -223,6 +228,7 @@ def test_show_list(client):
 
 
 def test_add_item(client):
+    """Test the endpoint for adding items."""
     create_user(client, "testuser", "testpass123")
     testuser = User.query.filter_by(username="testuser").first()
     add_list(client, "emlist")
@@ -255,6 +261,7 @@ def test_add_item(client):
 
 
 def test_reserve_item(client):
+    """Test the endpoint for reserving items."""
     create_user(client, "testuser", "testpass123")
     testuser = User.query.filter_by(username="testuser").first()
     logout_user(client)
@@ -313,6 +320,7 @@ def test_reserve_item(client):
 
 
 def test_claim_item(client):
+    """Test the endpoint for claiming item."""
     create_user(client, "firstuser", "testpass123")
     firstuser = User.query.filter_by(username="firstuser").first()
     logout_user(client)
@@ -355,6 +363,7 @@ def test_claim_item(client):
 
 
 def test_archive_list(client):
+    """Test the endpoint for list archivation."""
     create_user(client, "seconduser", "testpass123")
     seconduser = User.query.filter_by(username="seconduser").first()
     add_list(client, "secondlist")
@@ -394,6 +403,7 @@ def test_archive_list(client):
 
 
 def test_delete_list(client):
+    """Test the endpoint for list deletion."""
     create_user(client, "firstuser", "testpass123")
     add_list(client, "firstlist")
     firstlist = Wishlist.query.filter_by(name="firstlist").first()
@@ -415,6 +425,7 @@ def test_delete_list(client):
 
 
 def test_delete_item(client):
+    """Test the endpoint for item deletion."""
     create_user(client, "seconduser", "testpass123")
     seconduser = User.query.filter_by(username="seconduser").first()
     logout_user(client)
@@ -457,6 +468,7 @@ def test_delete_item(client):
 
 
 def test_search_user(client):
+    """Test the endpoint for user search."""
     create_user(client, "firstuser", "testpass123")
     firstuser = User.query.filter_by(username="firstuser").first()
     create_user(client, "seconduser", "testpass123")
@@ -502,6 +514,7 @@ def test_search_user(client):
 
 
 def test_share_list(client):
+    """Test the endpoint for list sharing."""
     create_user(client, "testuser", "testpass123")
     f_user = User.query.filter_by(username="testuser").first()
     f_user_id = f_user.id
@@ -550,6 +563,7 @@ def test_share_list(client):
 
 
 def test_unshare_list(client):
+    """Test the endpoint for list unsharing."""
     create_user(client, "user_ns", "testpass123")
     user_ns = User.query.filter_by(username="user_ns").first()
 

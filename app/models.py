@@ -39,12 +39,28 @@ class User(UserMixin, db.Model):
     )
 
     def set_password(self, password: str):
+        """Set a new hashed password.
+
+        Keyword arguments:
+            password -- The new password.
+        """
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
+        """Check if password is correct.
+
+        Keyword arguments:
+            password -- The password to check.
+        """
         return check_password_hash(self.password_hash, password)
 
     def search_to_share(self, wishlist, user_query: str) -> list:
+        """Return a list of users corresponding to the query.
+
+        Keyword arguments:
+            wishlist -- The wishlist on which the user searches.
+            user_query -- The search query.
+        """
         users = (
             User.query.filter(User.username.ilike("%" + user_query + "%"))
             .limit(20)

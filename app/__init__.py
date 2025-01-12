@@ -24,9 +24,14 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Load current user.
+
+    required for login_manager
+    """
     return db.session.get(models.User, int(user_id))
 
 def create_app(db_url=None, secret=None):
+    """Create a wishlist app that allows users to create, edit and share wishlists and reserve items."""
     wishlist_app = Flask(__name__)
     wishlist_app.config["SQLALCHEMY_DATABASE_URI"] = db_url or DEFAULT_DB
     wishlist_app.config["SECRET_KEY"] = secret or secrets.token_hex(32)

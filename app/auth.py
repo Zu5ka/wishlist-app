@@ -8,6 +8,7 @@ auth_blueprint = Blueprint("auth", __name__)
 
 @auth_blueprint.route("/login", methods=["GET", "POST"])
 def login():
+    """Log a user in."""
     if request.method == "GET":
         return render_template("login.html")
 
@@ -26,6 +27,7 @@ def login():
 # we need this many return statements
 # pylint: disable=too-many-return-statements
 def register():
+    """Register a new user."""
     if request.method == "GET":
         return render_template("register.html")
 
@@ -56,5 +58,6 @@ def register():
 @auth_blueprint.route("/logout", methods=["POST"])
 @login_required
 def logout():
+    """Log a user out."""
     logout_user()
     return "", 200, {"HX-Redirect": url_for("auth.login")}

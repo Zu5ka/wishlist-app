@@ -10,12 +10,23 @@ views_blueprint = Blueprint("views", __name__)
 @views_blueprint.route("/")
 @login_required
 def index():
+    """Show main page.
+
+    Returns:
+        a rendered HTML template.
+    """
     return render_template("index.html", results=[])
 
 
 @views_blueprint.route("/wishlist", methods=["POST"])
 @login_required
 def add_list():
+    """Add a new list.
+
+    Returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     list_name = request.form.get("list_name")
     if not list_name or list_name.strip() == "":
         return "Název seznamu musí obsahovat alespoň jeden znak.", 400
@@ -31,6 +42,15 @@ def add_list():
 @views_blueprint.route("/wishlist/<int:list_id>", methods=["GET"])
 @login_required
 def show_list(list_id):
+    """Show a list.
+
+    Keyword arguments:
+        list_id -- the id of the list to show
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if wishlist.user_id != current_user.id and current_user not in wishlist.shared_with:
         return "Nemáte právo zobrazit tento seznam", 403
@@ -40,6 +60,15 @@ def show_list(list_id):
 @views_blueprint.route("/<int:list_id>/item", methods=["POST"])
 @login_required
 def add_item(list_id):
+    """Add an item.
+
+    Keyword arguments:
+        list_id -- the id of the list to add the item to
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     item_name = request.form.get("new_item_name")
     if not item_name or item_name.strip() == "":
         return "Název položky musí obsahovat alespoň jeden znak.", 400
@@ -59,6 +88,14 @@ def add_item(list_id):
 @views_blueprint.route("/item/reserve/<int:item_id>", methods=["PATCH"])
 @login_required
 def reserve_item(item_id):
+    """Reserve an item.
+
+    Keyword arguments:
+        item_id -- the id of the item to reserve
+
+    returns:
+        a message with a status code
+    """
     item = Item.query.filter_by(id=item_id).first()
     if not item:
         return "Položka neexistuje.", 404
@@ -77,6 +114,15 @@ def reserve_item(item_id):
 @views_blueprint.route("/item/claim/<int:item_id>", methods=["PATCH"])
 @login_required
 def claim_item(item_id):
+    """Claim an item.
+
+    Keyword arguments:
+        item_id -- the id of the item to claim
+
+    returns:
+        a rendered HTML template
+        or a message with a status code
+    """
     item = Item.query.filter_by(id=item_id).first()
     if not item:
         return "Položka neexistuje.", 404
@@ -97,6 +143,15 @@ def claim_item(item_id):
 @views_blueprint.route("/wishlist/archive/<int:list_id>", methods=["PATCH"])
 @login_required
 def archive_list(list_id):
+    """Archive a list.
+
+    Keyword arguments:
+        list_id -- the id of the list to archive
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not wishlist:
         return "Seznam neexistuje.", 404
@@ -117,6 +172,15 @@ def archive_list(list_id):
 @views_blueprint.route("/wishlist/delete/<int:list_id>", methods=["DELETE"])
 @login_required
 def delete_list(list_id):
+    """Delete a list.
+
+    Keyword arguments:
+        list_id -- the id of the list to delete
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not wishlist:
         return "Seznam neexistuje.", 404
@@ -130,6 +194,14 @@ def delete_list(list_id):
 @views_blueprint.route("/item/delete/<int:item_id>", methods=["DELETE"])
 @login_required
 def delete_item(item_id):
+    """Delete an item.
+
+    Keyword arguments:
+        item_id -- the id of the item to delete
+
+    returns:
+        a message with a status code
+    """
     item = Item.query.filter_by(id=item_id).first()
     if not item:
         return "Položka neexistuje.", 404
@@ -145,6 +217,15 @@ def delete_item(item_id):
 @views_blueprint.route("/user/search/<int:list_id>", methods=["POST"])
 @login_required
 def search_user(list_id):
+    """Search for user.
+
+    Keyword arguments:
+        list_id -- the id of the list for which to search a user to share with
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     user_query = request.form.get("search")
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not wishlist:
@@ -164,6 +245,16 @@ def search_user(list_id):
 @views_blueprint.route("/list/<int:list_id>/share/<int:user_id>", methods=["PATCH"])
 @login_required
 def share_list(list_id, user_id):
+    """Share a list.
+
+    Keyword arguments:
+        list_id -- the id of the list to share
+        user_id -- the id of the user to share the list with
+
+    returns:
+        a rendered HTML template
+        or an error message with an error status code
+    """
     user = User.query.filter_by(id=user_id).first()
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not user or not wishlist:
@@ -184,6 +275,12 @@ def share_list(list_id, user_id):
 @views_blueprint.route("/list/<int:list_id>/unshare/<int:user_id>", methods=["PATCH"])
 @login_required
 def unshare_list(list_id, user_id):
+    """Unshare a list.
+
+    Keyword arguments:
+        list_id -- the id of the list to unshare
+        user_id -- the id of the user to unshare the list with
+    """
     user = User.query.filter_by(id=user_id).first()
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not user or not wishlist:
