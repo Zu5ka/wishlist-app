@@ -4,7 +4,7 @@
             Moje seznamy <span uk-nav-parent-icon></span>
         </a>
         <ul id="my_lists">
-            {% for list in current_user.wishlists if list.state != ListState.deleted and list.state != ListState.archived%}
+            {% for list in current_user.wishlists if list.state != ListState.DELETED and list.state != ListState.ARCHIVED %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>
@@ -24,7 +24,7 @@
             Archivované seznamy <span uk-nav-parent-icon></span>
         </a>
         <ul id="archived_lists">
-            {% for list in current_user.wishlists if list.state == ListState.archived %}
+            {% for list in current_user.wishlists if list.state == ListState.ARCHIVED %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>

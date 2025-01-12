@@ -6,26 +6,26 @@
                {% if current_user.id == list.user_id %}
                     hx-patch="{{ url_for('views.claim_item', item_id=item.id) }}"
                     hx-swap="outerHTML"
-                    {% if item.state == ItemState.claimed %} checked {% endif %}
+                    {% if item.state == ItemState.CLAIMED %} checked {% endif %}
                {% else %}
                     hx-patch="{{ url_for('views.reserve_item', item_id=item.id) }}"
                     hx-swap="none"
-                    {% if item.state == ItemState.reserved %} checked {% endif %}
+                    {% if item.state == ItemState.RESERVED %} checked {% endif %}
                {% endif %}
-               {% if list.state == ListState.archived %}
+               {% if list.state == ListState.ARCHIVED %}
                disabled="true"
                {% endif %}
         >
     </td>
     <td class="uk-table-expand">
-        {% if item.state == ItemState.claimed %}
+        {% if item.state == ItemState.CLAIMED %}
         <s>{{ item.name }}</s>
         {% else %}
         {{ item.name }}
         {% endif %}
     </td>
     <td class="uk-table-shrink">
-        {% if current_user.id == list.user_id and list.state != ListState.archived %}
+        {% if current_user.id == list.user_id and list.state != ListState.ARCHIVED %}
         <a href=""
            uk-icon="icon: trash"
            hx-delete="{{ url_for('views.delete_item', item_id=item.id) }}"

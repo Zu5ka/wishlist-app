@@ -58,14 +58,14 @@ def reserve_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
     if not item:
         return "Položka neexistuje.", 404
-    if item.state not in (ItemState.active, ItemState.reserved):
+    if item.state not in (ItemState.ACTIVE, ItemState.RESERVED):
         return "Položka je předaná nebo smazaná.", 400
     if current_user not in item.wishlist.shared_with:
         return "Seznam je Váš nebo s Vámi není sdílený.", 403
-    if item.state == ItemState.active:
-        item.state = ItemState.reserved
+    if item.state == ItemState.ACTIVE:
+        item.state = ItemState.RESERVED
     else:
-        item.state = ItemState.active
+        item.state = ItemState.ACTIVE
     db.session.commit()
     return "", 200
 
@@ -76,14 +76,14 @@ def claim_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
     if not item:
         return "Položka neexistuje.", 404
-    if item.state == ItemState.deleted:
+    if item.state == ItemState.DELETED:
         return "Položka už je smazaná.", 400
     if current_user != item.wishlist.user:
         return "Seznam není Váš.", 403
-    if item.state != ItemState.claimed:
-        item.state = ItemState.claimed
+    if item.state != ItemState.CLAIMED:
+        item.state = ItemState.CLAIMED
     else:
-        item.state = ItemState.active
+        item.state = ItemState.ACTIVE
     db.session.commit()
     return render_template(
         "_partials/_item.html", item=item, list=item.wishlist, current_user=current_user
@@ -96,14 +96,14 @@ def archive_list(list_id):
     wishlist = Wishlist.query.filter_by(id=list_id).first()
     if not wishlist:
         return "Seznam neexistuje.", 404
-    if wishlist.state == ListState.deleted:
+    if wishlist.state == ListState.DELETED:
         return "Seznam je smazaný.", 400
     if current_user != wishlist.user:
         return "Seznam není váš.", 403
-    if wishlist.state != ListState.archived:
-        wishlist.state = ListState.archived
+    if wishlist.state != ListState.ARCHIVED:
+        wishlist.state = ListState.ARCHIVED
     else:
-        wishlist.state = ListState.active
+        wishlist.state = ListState.ACTIVE
     db.session.commit()
     return render_template(
         "_partials/_list.html", list=wishlist, current_user=current_user, oob=True
@@ -131,7 +131,7 @@ def delete_item(item_id):
         return "Položka neexistuje.", 404
     if item.wishlist.user_id != current_user.id:
         return "Položka neexistuje ve Vašem seznamu.", 403
-    if item.wishlist.state != ItemState.active:
+    if item.wishlist.state != ItemState.ACTIVE:
         return "Položka se nachází na archivovaném nebo smazaném seznamu", 400
     item.state = 3
     db.session.commit()

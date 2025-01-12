@@ -281,13 +281,13 @@ def test_reserve_item(client):
 
     response = reserve_item(client, firstitem.id)
     assert response.status_code == 200
-    assert firstitem.state == ItemState.reserved
+    assert firstitem.state == ItemState.RESERVED
     response = reserve_item(client, firstitem.id)
     assert response.status_code == 200
-    assert firstitem.state != ItemState.reserved
+    assert firstitem.state != ItemState.RESERVED
     response = reserve_item(client, firstitem.id)
     assert response.status_code == 200
-    assert firstitem.state == ItemState.reserved
+    assert firstitem.state == ItemState.RESERVED
 
     response = reserve_item(client, seconditem.id)
     respond_error(response, 403, "Seznam je Váš nebo s Vámi není sdílený.")
@@ -296,12 +296,12 @@ def test_reserve_item(client):
     login_user(client, "secuser", "testpass123")
 
     claim_item(client, firstitem.id)
-    assert firstitem.state == ItemState.claimed
+    assert firstitem.state == ItemState.CLAIMED
 
     add_item(client, "thirditem", firstlist.id)
     thirditem = Item.query.filter_by(name="thirditem").first()
     delete_item(client, thirditem.id)
-    assert thirditem.state == ItemState.deleted
+    assert thirditem.state == ItemState.DELETED
 
     logout_user(client)
     login_user(client, "testuser", "testpass123")
@@ -349,7 +349,7 @@ def test_claim_item(client):
     assert response.status_code == 200
 
     delete_item(client, firstitem.id)
-    assert firstitem.state == ItemState.deleted
+    assert firstitem.state == ItemState.DELETED
     response = claim_item(client, firstitem.id)
     respond_error(response, 400, "Položka už je smazaná.")
 
@@ -373,13 +373,13 @@ def test_archive_list(client):
 
     response = archive_list(client, firstlist.id)
     assert response.status_code == 200
-    assert firstlist.state == ListState.archived
+    assert firstlist.state == ListState.ARCHIVED
     response = archive_list(client, firstlist.id)
     assert response.status_code == 200
-    assert firstlist.state != ListState.archived
+    assert firstlist.state != ListState.ARCHIVED
 
     delete_list(client, firstlist.id)
-    assert firstlist.state == ListState.deleted
+    assert firstlist.state == ListState.DELETED
     response = archive_list(client, firstlist.id)
     respond_error(response, 400, "Seznam je smazaný.")
 
@@ -402,7 +402,7 @@ def test_delete_list(client):
     respond_error(response, 404, "Seznam neexistuje.")
 
     response = delete_list(client, firstlist.id)
-    assert firstlist.state == ListState.deleted
+    assert firstlist.state == ListState.DELETED
     assert response.status_code == 200
 
     add_list(client, "secondlist")
