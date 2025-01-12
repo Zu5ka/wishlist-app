@@ -2,6 +2,8 @@
     <div id="list-card" class="uk-card uk-card-body uk-card-default uk-flex uk-flex-column uk-width-1-1"
          style="height: 80vh"
     >
+
+            {% if list.user.id == current_user.id %}
             <div class="uk-flex uk-flex-row uk-flex-right uk-flex-middle">
                 {% if list.state != ListState.ARCHIVED %}
                 <a href=""
@@ -14,6 +16,8 @@
                 <span class="username">{{ list.user.username }}</span>
                 {% endif %}
             </div>
+            {% endif %}
+
         <h1 class="uk-margin-remove">{{ list.name }}</h1>
         <hr>
         <div class="uk-flex-1 uk-overflow-auto">
