@@ -1,3 +1,4 @@
+import secrets
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -9,9 +10,12 @@ class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
+DEFAULT_DB = "sqlite:///wishlist.db"
+
 # the database needs to be initialised before import
 # pylint: disable=wrong-import-position
 from . import models
+
 # the database needs to be initialised before import
 # pylint: disable=wrong-import-position
 from .models import ItemState, ListState
@@ -22,10 +26,10 @@ login_manager = LoginManager()
 def load_user(user_id):
     return db.session.get(models.User, int(user_id))
 
-def create_app():
+def create_app(db_url=None, secret=None):
     wishlist_app = Flask(__name__)
-    wishlist_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///wishlist.db"
-    wishlist_app.config["SECRET_KEY"] = "vanilkova zmrzlina"
+    wishlist_app.config["SQLALCHEMY_DATABASE_URI"] = db_url or DEFAULT_DB
+    wishlist_app.config["SECRET_KEY"] = secret or secrets.token_hex(32)
     wishlist_app.jinja_env.globals["ItemState"] = ItemState
     wishlist_app.jinja_env.globals["ListState"] = ListState
 
@@ -46,5 +50,3 @@ def create_app():
     wishlist_app.register_blueprint(views_blueprint)
 
     return wishlist_app
-
-app = create_app()
