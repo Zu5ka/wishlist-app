@@ -45,6 +45,11 @@ class User(UserMixin, db.Model):
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
+    def search_to_share(self, wishlist, user_query: str) -> list:
+        users = (
+            User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
+        )
+        return [x for x in users if x not in wishlist.shared_with and x != self]
 
 class Wishlist(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

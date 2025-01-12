@@ -145,14 +145,13 @@ def search_user(list_id):
     list = Wishlist.query.filter_by(id=list_id).first()
     if not list:
         return "Seznam neexistuje.", 404
+    if list.user_id != current_user.id:
+        return "Seznam není Váš.", 403
     if not user_query:
         return render_template(
             "_partials/_user_search_results.html", results=[], list=list
         )
-    users = (
-        User.query.filter(User.username.ilike("%" + user_query + "%")).limit(20).all()
-    )
-    results = [x for x in users if x not in list.shared_with and x != current_user]
+    results = current_user.search_to_share(list, user_query)
     return render_template(
         "_partials/_user_search_results.html", results=results, list=list
     )
