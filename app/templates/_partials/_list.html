@@ -3,20 +3,20 @@
          style="height: 80vh"
     >
 
-            {% if list.user.id == current_user.id %}
             <div class="uk-flex uk-flex-row uk-flex-right uk-flex-middle">
-                {% if list.state != ListState.ARCHIVED %}
-                <a href=""
-                   uk-icon="icon: album"
-                   hx-patch="{{ url_for('views.archive_list', list_id=list.id) }}"
-                   hx-confirm="Chcete seznam archivovat?"
-                   hx-target="#list-view-{{ list.id }}"
-                   hx-swap="outerHTML"
-                ></a>
-                <span class="username">{{ list.user.username }}</span>
+                {% if list.user.id == current_user.id %}
+                    {% if list.state != ListState.ARCHIVED %}
+                    <a href=""
+                       uk-icon="icon: album"
+                       hx-patch="{{ url_for('views.archive_list', list_id=list.id) }}"
+                       hx-confirm="Chcete seznam archivovat?"
+                       hx-target="#list-view-{{ list.id }}"
+                       hx-swap="outerHTML"
+                    ></a>
+                    {% endif %}
                 {% endif %}
+                <span class="username">{{ list.user.username }}</span>
             </div>
-            {% endif %}
 
         <h1 class="uk-margin-remove">{{ list.name }}</h1>
         <hr>
