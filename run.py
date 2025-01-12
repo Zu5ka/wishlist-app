@@ -1,3 +1,5 @@
+"""Run the application."""
+
 import argparse
 import secrets
 from waitress import serve

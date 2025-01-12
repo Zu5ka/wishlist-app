@@ -1,6 +1,8 @@
+"""The endpoints for the web application"""
+
+import json
 from flask import render_template, Blueprint, request
 from flask_login import login_required, current_user
-import json
 from . import db
 from .models import Wishlist, Item, User, ItemState, ListState
 

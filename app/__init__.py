@@ -1,3 +1,5 @@
+"""Create a wishlist app that allows users to create, edit and share wishlists and reserve items."""
+
 import secrets
 from flask import Flask
 from flask_login import LoginManager
@@ -7,7 +9,7 @@ from sqlalchemy.orm import DeclarativeBase
 # third-party library
 # pylint: disable=too-few-public-methods
 class Base(DeclarativeBase):
-    pass
+    """Required by SQLAlchemy."""
 
 db = SQLAlchemy(model_class=Base)
 DEFAULT_DB = "sqlite:///wishlist.db"

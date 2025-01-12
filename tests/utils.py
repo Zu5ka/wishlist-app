@@ -1,3 +1,5 @@
+"""Helper functions for test_app.py"""
+
 def create_user(client, username, password):
     """Register a new user.
 

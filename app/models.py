@@ -1,3 +1,5 @@
+"""Database"""
+
 from enum import IntEnum
 from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -7,6 +9,7 @@ from . import db
 
 
 class ItemState(IntEnum):
+    """State of an item."""
     ACTIVE = 0
     RESERVED = 1
     CLAIMED = 2
@@ -14,6 +17,7 @@ class ItemState(IntEnum):
 
 
 class ListState(IntEnum):
+    """State of a list."""
     ACTIVE = 0
     ARCHIVED = 1
     DELETED = 2
@@ -29,6 +33,7 @@ wishlist_shares = db.Table(
 
 
 class User(UserMixin, db.Model):
+    """User table in databse."""
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
     password_hash: Mapped[str] = mapped_column()
@@ -71,6 +76,7 @@ class User(UserMixin, db.Model):
 # third-party library
 # pylint: disable=too-few-public-methods
 class Wishlist(db.Model):
+    """Wishlist table in databse."""
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
     state: Mapped[int] = mapped_column(default=ListState.ACTIVE)
@@ -87,6 +93,7 @@ class Wishlist(db.Model):
 # third-party library
 # pylint: disable=too-few-public-methods
 class Item(db.Model):
+    """Item table in databse."""
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
     state: Mapped[int] = mapped_column(default=ItemState.ACTIVE)

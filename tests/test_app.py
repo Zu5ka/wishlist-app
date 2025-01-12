@@ -1,4 +1,8 @@
+"""Tests for pytest"""
+
 from app.models import Wishlist, User, Item, ItemState, ListState
+# this import is neccessary
+# pylint: disable=unused-import
 from .config_test import app, create_app
 from .utils import (
     create_user,
@@ -183,12 +187,11 @@ def test_logout(client):
     assert "Set-Cookie" in response.headers
 
 
-def test_add_list(client, app):
+def test_add_list(client):
     """Test the endpoind for adding lists."""
     create_user(client, "testuser", "testpass123")
     add_list(client, "newlist")
-    with app.app_context():
-        assert Wishlist.query.filter_by(name="newlist").first() is not None
+    assert Wishlist.query.filter_by(name="newlist").first() is not None
 
     response = add_list(client, "   ")
     assert response.text == "Název seznamu musí obsahovat alespoň jeden znak."

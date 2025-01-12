@@ -1,3 +1,5 @@
+"""Configuration for testing via pytest"""
+
 import pytest
 from app import create_app, db
 
