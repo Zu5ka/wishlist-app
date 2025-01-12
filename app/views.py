@@ -209,7 +209,7 @@ def delete_item(item_id):
         return "Položka neexistuje ve Vašem seznamu.", 403
     if item.wishlist.state != ItemState.ACTIVE:
         return "Položka se nachází na archivovaném nebo smazaném seznamu", 400
-    item.state = 3
+    item.state = ItemState.DELETED
     db.session.commit()
     return "", 200
 
