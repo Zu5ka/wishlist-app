@@ -4,11 +4,12 @@ from waitress import serve
 from app import create_app, db, DEFAULT_DB
 
 DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 5000
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Wishlist app")
     parser.add_argument(
-        "--port", type=int, default=5000, help="Port on which the app should run"
+        "--port", type=int, default=DEFAULT_PORT, help=f"Port on which the app should run (default {DEFAULT_PORT})"
     )
     parser.add_argument("--prod", action="store_true", help="Run in production mode")
     parser.add_argument(
