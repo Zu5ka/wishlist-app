@@ -445,6 +445,44 @@ def test_share_list(client):
     assert response.status_code == 403
     assert response.text == "Seznam patří jinému uživateli."
 
+def test_delete_item(client):
+    create_user(client, "seconduser", "testpass123")
+    seconduser = User.query.filter_by(username="seconduser").first()
+    logout_user(client)
+
+    create_user(client, "firstuser", "testpass123")
+    firstuser = User.query.filter_by(username="firstuser").first()
+    add_list(client, "firstlist")
+    firstlist = Wishlist.query.filter_by(name="firstlist").first()
+    add_item(client, "firstitem", firstlist.id)
+    firstitem = Item.query.filter_by(name="firstitem").first()
+    add_item(client, "seconditem", firstlist.id)
+    seconditem = Item.query.filter_by(name="seconditem").first()
+
+    response = delete_item(client, 55)
+    respond_error(response, 404, "Položka neexistuje.")
+
+    response = delete_item(client, firstitem.id)
+    assert response.status_code == 200
+
+    archive_list(client, firstlist.id)
+    response = delete_item(client, seconditem.id)
+    respond_error(response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu")
+    delete_list(client, firstlist.id)
+    response = delete_item(client, seconditem.id)
+    respond_error(response, 400, "Položka se nachází na archivovaném nebo smazaném seznamu")
+
+    add_list(client, "secondlist")
+    secondlist = Wishlist.query.filter_by(name="secondlist").first()
+    add_item(client, "thirditem", secondlist.id)
+    thirditem = Item.query.filter_by(name="thirditem").first()
+    share_list(client, seconditem.id, seconduser.id)
+    logout_user(client)
+
+    login_user(client, "seconduser", "testpass123")
+    response = delete_item(client, thirditem.id)
+    respond_error(response, 403, "Položka neexistuje ve Vašem seznamu.")
+
 def test_unshare_list(client):
     create_user(client, "user_ns", "testpass123")
     user_ns = User.query.filter_by(username="user_ns").first()
