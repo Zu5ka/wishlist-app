@@ -31,20 +31,21 @@
 
         {% if list.user.id == current_user.id %}
         {% if list.state != ListState.ARCHIVED %}
-        <section class="uk-flex uk-flex-row uk-flex-center uk-flex-middle uk-padding-top-small">
-            <a href=""
-               class="uk-margin-small-right uk-button uk-button-primary"
-               hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
-               hx-include="closest section"
-               hx-target="#items-{{ list.id }}"
-               hx-swap="beforeend"
-            >
-                <span uk-icon="plus"></span>
-            </a>
-            <input type="text"
-                   class="uk-input"
-                   placeholder="přidat položku"
-                   name="new_item_name">
+        <section class="uk-flex uk-flex-row uk-flex-center uk-flex-middle uk-padding-top-small"
+                 hx-post="{{ url_for('views.add_item', list_id=list.id) }}"
+                 hx-target="#items-{{ list.id }}"
+                 hx-include="[name='new_item_name']"
+                 hx-trigger="click from:a, keyup[key=='Enter'] from:input"
+                 hx-on::after-request="this.querySelector('input').value = ''"
+                 hx-swap="beforeend">
+           <a href="#" class="uk-margin-small-right uk-button uk-button-primary">
+               <span uk-icon="plus"></span>
+           </a>
+           <!-- hx-on vymaze hodnotu inputu po submitu -->
+           <input type="text"
+                  class="uk-input"
+                  placeholder="přidat položku"
+                  name="new_item_name">
         </section>
         <!-- TODO: connect to route -->
         <span id="list_errors" class="uk-text-danger"></span>
@@ -101,7 +102,7 @@
                 </div>
 
                 <div class="uk-modal-footer uk-text-right">
-                    <!-- TODO: dialog shouldnt close until succes -->
+                    <!-- TODO: dialog shouldnt close until success -->
                     <button class="uk-button uk-button-default uk-modal-close" type="button">Zavřít</button>
                 </div>
             </div>
