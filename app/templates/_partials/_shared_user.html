@@ -9,14 +9,13 @@
         <span>
             {{ user.username }}
         </span>
-        <a href="" uk-icon="icon: close"></a>
+        <span uk-icon="icon: close"></span>
     </span>
     </li>
 </ul>
 {% else %}
 <li id="remove-user-{{user.id}}">
     <span class="uk-label uk-flex uk-flex-middle"
-          uk-icon="icon: close"
           hx-patch="{{ url_for('views.unshare_list', list_id=list.id, user_id=user.id) }}"
           hx-swap="delete"
           hx-target="#remove-user-{{user.id}}"
@@ -24,7 +23,7 @@
         <span>
             {{ user.username }}
         </span>
-        <a href="#" uk-icon="icon: close"></a>
+        <span uk-icon="icon: close"></span>
     </span>
 </li>
 {% endif %}
