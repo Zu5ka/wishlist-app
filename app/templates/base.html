@@ -19,7 +19,6 @@
     </head>
     <body hx-boost>
         {% block content %}{% endblock %}
-
         <script>
          // This part of code is copied from https://stackoverflow.com/a/73593579
          document.body.addEventListener('htmx:beforeOnLoad', function(evt) {
@@ -33,16 +32,14 @@
          function isMobile() {
              // Width-based check
              const isNarrow = window.matchMedia('(max-width: 959px)').matches;
-
-                 // Orientation-based checks
-                 const isPortrait = (
-                     window.orientation === 0 || // iOS/Android
-                     window.orientation === undefined && // Desktop browsers
-                     (screen.orientation?.type?.includes('portrait') || // Modern browsers
-                      window.innerHeight > window.innerWidth) // Fallback
-                 );
-
-                 return isNarrow || isPortrait;
+             // Orientation-based checks
+             const isPortrait = (
+                 window.orientation === 0 || // iOS/Android
+                 window.orientation === undefined && // Desktop browsers
+                 (screen.orientation?.type?.includes('portrait') || // Modern browsers
+                  window.innerHeight > window.innerWidth) // Fallback
+             );
+             return isNarrow || isPortrait;
          }
 
          function adjustCardHeight() {
@@ -56,6 +53,15 @@
                  });
              }
          }
+
+         // https://htmx.org/api/#process
+         document.body.addEventListener('addToMobileList', function(evt) {
+             const mobileList = document.getElementById('mobile-my_lists');
+            if (mobileList) {
+                mobileList.insertAdjacentHTML('beforeend', evt.detail.html);
+                htmx.process(mobileList.lastElementChild);
+            }
+         });
 
          window.addEventListener('resize', adjustCardHeight);
          window.addEventListener('orientationchange', adjustCardHeight);

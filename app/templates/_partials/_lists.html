@@ -3,7 +3,7 @@
         <a href="" class="uk-text-large">
             Moje seznamy <span uk-nav-parent-icon></span>
         </a>
-        <ul id="my_lists">
+        <ul id="desktop-my_lists">
             {% for list in current_user.wishlists if list.state != ListState.DELETED and list.state != ListState.ARCHIVED %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
@@ -13,7 +13,7 @@
         <a href="" class="uk-text-large">
             Seznamy ostatních <span uk-nav-parent-icon></span>
         </a>
-        <ul>
+        <ul id="desktop-shared_lists">
             {% for list in current_user.shared_with_me %}
                 {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
@@ -23,9 +23,9 @@
         <a href="" class="uk-text-large">
             Archivované seznamy <span uk-nav-parent-icon></span>
         </a>
-        <ul id="archived_lists">
+        <ul id="desktop-archived_lists">
             {% for list in current_user.wishlists if list.state == ListState.ARCHIVED %}
-                {% include "_partials/_lists_menu_entry.html" %}
+            {% include "_partials/_lists_menu_entry.html" %}
             {% endfor %}
         </ul>
     </li>

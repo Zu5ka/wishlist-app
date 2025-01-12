@@ -23,7 +23,7 @@
             <a class="uk-button uk-button-default uk-margin-xsmall uk-width-1-1"
                href="#modal-sections" uk-toggle>Nový seznam</a>
         </div>
-        {% include "_partials/_lists.html" %}
+        {% include "_partials/_mobile_lists.html" %}
     </div>
 </div>
 
@@ -59,7 +59,7 @@
                    placeholder="název seznamu"
                    hx-trigger="keyup[key == 'Enter']"
                    hx-post="{{ url_for('views.add_list') }}"
-                   hx-target="#my_lists"
+                   hx-target="#desktop-my_lists"
                    hx-swap="beforeend"
                    hx-on::after-request="this.value = ''"
                    name="list_name" required>
@@ -72,7 +72,7 @@
                     hx-post="{{ url_for('views.add_list') }}"
                     hx-on::after-request="document.querySelector('#new_list_input').value = ''"
                     hx-include="#new_list_input"
-                    hx-target="#my_lists"
+                    hx-target="#desktop-my_lists"
                     hx-swap="beforeend"
             >Vytvořit</button>
         </div>

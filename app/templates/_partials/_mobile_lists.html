@@ -1,0 +1,32 @@
+<ul uk-nav="multiple: true" class="uk-nav uk-nav-default">
+    <li class="uk-parent uk-open">
+        <a href="" class="uk-text-large">
+            Moje seznamy <span uk-nav-parent-icon></span>
+        </a>
+        <ul id="mobile-my_lists">
+            {% for list in current_user.wishlists if list.state != ListState.DELETED and list.state != ListState.ARCHIVED %}
+                {% include "_partials/_lists_menu_entry.html" %}
+            {% endfor %}
+        </ul>
+    </li>
+    <li class="uk-parent uk-open">
+        <a href="" class="uk-text-large">
+            Seznamy ostatních <span uk-nav-parent-icon></span>
+        </a>
+        <ul id="mobile-shared_lists">
+            {% for list in current_user.shared_with_me %}
+                {% include "_partials/_lists_menu_entry.html" %}
+            {% endfor %}
+        </ul>
+    </li>
+    <li class="uk-parent uk-open">
+        <a href="" class="uk-text-large">
+            Archivované seznamy <span uk-nav-parent-icon></span>
+        </a>
+        <ul id="mobile-archived_lists">
+            {% for list in current_user.wishlists if list.state == ListState.ARCHIVED %}
+            {% include "_partials/_lists_menu_entry.html" %}
+            {% endfor %}
+        </ul>
+    </li>
+</ul>

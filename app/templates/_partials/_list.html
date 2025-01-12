@@ -110,21 +110,27 @@
         </div>
     </div>
 </div>
+
 {% if oob %}
     {% if list.state == ListState.ARCHIVED %}
         {% with delete=True %}
         {% include "_partials/_lists_menu_entry.html" %}
         {% endwith %}
-        <ul id="archived_lists" hx-swap-oob="beforeend">
+        <ul id="desktop-archived_lists" hx-swap-oob="beforeend">
+            {% include "_partials/_lists_menu_entry.html" %}
+        </ul>
+        <ul id="mobile-archived_lists" hx-swap-oob="beforeend">
             {% include "_partials/_lists_menu_entry.html" %}
         </ul>
     {% else %}
         {% with delete=True %}
         {% include "_partials/_lists_menu_entry.html" %}
         {% endwith %}
-        <ul id="my_lists"
-            hx-swap-oob="beforeend">
+        <ul id="desktop-my_lists" hx-swap-oob="beforeend">
             {% include "_partials/_lists_menu_entry.html" %}
         </ul>
-    {% endif %}
+        <ul id="mobile-my_lists" hx-swap-oob="beforeend">
+            {% include "_partials/_lists_menu_entry.html" %}
+        </ul>
+        {% endif %}
 {% endif %}

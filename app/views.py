@@ -1,5 +1,6 @@
 from flask import render_template, Blueprint, request
 from flask_login import login_required, current_user
+import json
 from . import db
 from .models import Wishlist, Item, User, ItemState, ListState
 
@@ -21,8 +22,11 @@ def add_list():
     wishlist = Wishlist(name=list_name, user_id=current_user.id)
     db.session.add(wishlist)
     db.session.commit()
-    return render_template("_partials/_lists_menu_entry.html", list=wishlist)
-
+    return render_template("_partials/_lists_menu_entry.html", list=wishlist), 200, {
+        "HX-Trigger": json.dumps({
+            "addToMobileList": {"id": wishlist.id, "html": render_template("_partials/_lists_menu_entry.html", list=wishlist)}
+        })
+    }
 
 @views_blueprint.route("/wishlist/<int:list_id>", methods=["GET"])
 @login_required
