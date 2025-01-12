@@ -36,6 +36,7 @@
                  hx-target="#items-{{ list.id }}"
                  hx-include="[name='new_item_name']"
                  hx-trigger="click from:a, keyup[key=='Enter'] from:input"
+                 hx-on::before-request="Array.from(document.querySelector('#items-{{ list.id }}').childNodes).filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => n.remove())"
                  hx-on::after-request="this.querySelector('input').value = ''"
                  hx-swap="beforeend">
            <a href="#" class="uk-margin-small-right uk-button uk-button-primary">
@@ -47,8 +48,6 @@
                   placeholder="přidat položku"
                   name="new_item_name">
         </section>
-        <!-- TODO: connect to route -->
-        <span id="list_errors" class="uk-text-danger"></span>
 
         <div class="uk-flex uk-flex-between uk-flex-none uk-margin-small">
             <a class="uk-button uk-button-danger uk-margin-xsmall"
