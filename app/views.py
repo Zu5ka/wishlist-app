@@ -131,6 +131,8 @@ def delete_item(id):
         return "Položka neexistuje.", 404
     if item.wishlist.user_id != current_user.id:
         return "Položka neexistuje ve Vašem seznamu.", 403
+    if item.wishlist.state != ItemState.active:
+        return "Položka se nachází na archivovaném nebo smazaném seznamu", 400
     item.state = 3
     db.session.commit()
     return "", 200
