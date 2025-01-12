@@ -61,7 +61,7 @@
                    hx-post="{{ url_for('views.add_list') }}"
                    hx-target="#desktop-my_lists"
                    hx-swap="beforeend"
-                   hx-on::after-request="this.value = ''"
+                   hx-on::after-request="this.value = ''; Array.from(document.querySelector('#desktop-my_lists').childNodes).filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => n.remove())"
                    name="list_name" required>
             <span id="errors" class="uk-text-danger"></span>
         </div>
@@ -70,7 +70,7 @@
             <button class="uk-button uk-button-primary"
                     type="button"
                     hx-post="{{ url_for('views.add_list') }}"
-                    hx-on::after-request="document.querySelector('#new_list_input').value = ''"
+                    hx-on::after-request="document.querySelector('#new_list_input').value = ''; Array.from(document.querySelector('#desktop-my_lists').childNodes).filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => n.remove())"
                     hx-include="#new_list_input"
                     hx-target="#desktop-my_lists"
                     hx-swap="beforeend"
