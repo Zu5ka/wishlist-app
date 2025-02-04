@@ -10,7 +10,7 @@
     </div>
     <div class="uk-navbar-right">
         <span class="uk-margin-right">{{ current_user.username }}</span>
-        <a href="" class="uk-margin-right" uk-icon="icon: sign-out"
+        <a href="" class="uk-margin-right uk-icon-link" uk-icon="icon: sign-out"
            hx-post="{{ url_for('auth.logout') }}"
            hx-confirm="Opravdu se chcete odhlásit?">
         </a>
