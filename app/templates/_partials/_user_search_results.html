@@ -1,9 +1,9 @@
-<ul id="search-results">
+<ul id="search-results" class="uk-padding-remove">
 
     {% for user in results %}
     <li id="add-user-{{user.id}}">
         <a href="#"
-           uk-icon="icon: plus"
+           uk-icon="icon: plus; ratio: 0.75"
            hx-patch="{{ url_for('views.share_list', list_id=list.id, user_id=user.id) }}"
            hx-swap="delete"
            hx-target="#add-user-{{user.id}}"
