@@ -189,7 +189,8 @@ def delete_list(list_id):
         return "Seznam neexistuje.", 404
     if wishlist.user_id != current_user.id:
         return "Seznam patří jinému uživateli.", 403
-    wishlist.state = 2
+    wishlist.state = ListState.DELETED
+    wishlist.shared_with = []
     db.session.commit()
     return render_template("_partials/_placeholder.html", list=wishlist, oob=True), 200
 
